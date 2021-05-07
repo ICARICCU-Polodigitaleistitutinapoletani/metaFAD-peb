@@ -1,0 +1,36 @@
+/****** BREADCRUMBS ******/
+.breadcrumb {
+  background-color: transparent;
+  padding-left: 0;
+  padding-bottom: 0;
+  .breadcrumb-item {
+    a {
+		 color: setColor(default, breadcrumb-text);
+    }
+    +.breadcrumb-item:before {
+		  content: "\f105";
+		  font-family: FontAwesome;
+		  color: setColor(default, breadcrumb-text);
+    }
+  }
+	&.breadcrumb-big {
+		.breadcrumb-item {
+			font-weight: 300;
+			&:first-child a {
+				text-transform: uppercase;
+				font-size: 2rem;
+			}
+			&:not(:first-child) {
+				font-size: 1.25rem;
+				margin-top: 10px;
+				font-weight: normal;
+				&:before {
+					margin-top: -2px;
+				}
+			}
+			span {
+				font-style: italic;
+			}
+		}
+	}
+}

@@ -1,0 +1,70 @@
+.nav {
+	margin-bottom: 27px;
+	&.nav-tabs {
+		border-bottom: 0;
+		.label {
+			position: relative;
+			bottom: 2px;
+			padding-right: 10px;
+		}
+		.nav-item {
+			margin-bottom: 0;
+			padding-right: 17px;
+			&.show {
+				.nav-link {
+					background-color: transparent;
+				}
+			}
+			&.danger {
+				.nav-link.active {
+					color: setColor(default, tab-danger);
+					&:after {
+						border-color: setColor(default, tab-danger);
+					}
+				}
+			}
+			&.success {
+				.nav-link.active {
+					color: setColor(default, tab-success);
+					&:after {
+						border-color: setColor(default, tab-success);
+					}
+				}
+			}
+		}
+		.nav-link {
+			border: 0;
+			font-size: 14px;
+			font-weight: 600;
+			padding: 0;
+			text-transform: uppercase;
+			color: setColor(default, tab-item);
+			&.active {
+				color: $text-black;
+				text-decoration: none;
+				background-color: transparent;
+				&:after {
+					content: '';
+					border-bottom: 2px solid setColor(default, tab-active);
+					display: flex;
+				}
+			}
+		}
+	}
+	&.nav-border {
+		border-bottom: 2px solid setColor(default,tab-border);
+		position: relative;
+		top: 2px;
+		.nav-link {
+			&.active {
+				&:after {
+					content: '';
+					border-bottom: 2px solid setColor(default, tab-active);
+					position: relative;
+					top: 2px;
+				}
+			}
+		}
+
+	}
+}

@@ -1,0 +1,30 @@
+<div class="row" *ngIf="appId!=='metafad'">
+  <nav class="col-12" aria-label="breadcrumb" role="navigation">
+    <app-breadcrumb [title]="'Gestione ontologie'"></app-breadcrumb>
+  </nav>
+</div>
+<div class="row" *ngIf="appId!=='metafad'">
+  <div class="col-12 col-sm-6 col-md-5 col-lg-3" *ngFor="let ontology of ontologies">
+    <app-card [ontology]="ontology" [type]="'manage'" [info]="info" (onShare)="onShare($event)" (onEdit)="onEdit($event)" (onDelete)="onDelete($event)"></app-card>
+  </div>
+  <div class="col-12 col-sm-6 col-md-5 col-lg-3" *ngIf="info.features?.addOntology">
+    <app-card [ontology]="emptyOntology" [type]="'manage'" (onAdd)="createOntology()"></app-card>
+  </div>
+</div>
+
+<div class="row" *ngIf="appId==='metafad'">
+  <nav class="col-12" aria-label="breadcrumb" role="navigation" *ngIf="type">
+    <app-breadcrumb [items]="headers"></app-breadcrumb>
+  </nav>
+
+  <div class="link-container" *ngIf="!type">
+    <div>
+      <a routerLink="ontology" routerLinkActive="active" (click)="setType('ontology')">Gestione portali e ontologie</a>
+    </div>
+    <div>
+      <a routerLink="content" routerLinkActive="active" (click)="setType('content')">Gestione contenuti</a>
+    </div>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

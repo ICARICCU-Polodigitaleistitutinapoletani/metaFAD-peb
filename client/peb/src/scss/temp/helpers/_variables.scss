@@ -1,0 +1,79 @@
+/****** Fonts ******/
+$font-base: 'Open Sans', sans-serif;
+$font-size-base: 15px;
+$font-awesome: FontAwesome;
+
+/****** Spacing ******/
+$spacer: 1rem;
+
+/****** COLORS ******/
+/********************/
+$transparent: transparent;
+$white: #FFF;
+$white-smoke: #F5F5F5;
+$black: #000;
+$black-light: rgba(0,0,0,.15);
+$gray-900: #212529;
+$gray20: #333333;
+$gray-dark: #505050;
+$gray: #808080;
+$gray-dark-light: #909090;
+$gray-lighter:#CCC;
+$gray91: #E8E8E8;
+$gray94: #F0F0F0;
+$gray99: #FCFCFC;
+$gainsboro: #DDDDDD;
+$blue-dark: #0567B9;
+$blue: #0067BC;
+$blue-aqua: #5D9CEC;
+$blue-light: #C1CFD5;
+$blue-lighter: #E7EFF7;
+$alice-blue: #F0F3F5;
+$green-acid: #C1B03F;
+$orange-ronchi: #EAB852;
+$orange-tulip-tree: #E3AC3D;
+$rich-gold: #A15226;
+$purple: #605CA8;
+$purple-dark: #584C9C;
+$violet: #A716D0;
+$green: #006623;
+$green-light: #409040;
+$teal: #36BC9B;
+$teal-dark: #2A9579;
+$cyan-dark: #008C8A;
+$red-dark: #CC4040;
+$red: #DC3545;
+
+/****** THEMES ***+**/
+/********************/
+$theme-green-acid: $green-acid;
+$theme-violet: $violet;
+
+/****** Global Colors ******/
+/***************************/
+$box-shadow: $gray;
+$border: $gray-lighter;
+$border-light: $gray91;
+$border-dark: $gray-dark-light;
+$border-header: $white;
+$text: $gray-dark;
+$text-black: $black;
+$text-bootstrap: $gray-900;
+
+/******$text DIMENSIONS ******/
+/************************/
+$header-height: 75px;
+$card-min-height: 210px;
+$card-width: 400px;
+
+/****** PAGES ******/
+/*******************/
+
+/* login page */
+$login-page-bg: $gray-lighter;
+
+/* Bootstrap 4 Breakpoints */
+$sm:576px;
+$md:768px;
+$lg:992px;
+$xl:1200px;

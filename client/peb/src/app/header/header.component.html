@@ -1,0 +1,99 @@
+<div class="app-header {{appId}}">
+  <div class="items-container">
+    <div class="item item-view row">
+      <div class="item item-label" *ngIf="appId=='metafad'">
+        {{label}}
+      </div>
+      
+      <div class="col-4" [class.double-col]="activeItem" [class.align-center]="appId=='metafad'"
+        *ngIf="type=='entities' || appId!='metafad'">
+        <span>Tipo visualizzazione:</span>
+        <div class="view-list">
+          <div class="view-type" [class.active]="view==='list'">
+            <a (click)="setView('list')">Elenco</a>
+          </div>
+          <div class="view-type" [class.active]="view==='map'">
+            <a (click)="setView('map')">Mappa</a>
+          </div>
+        </div>
+        <div class="add-item" *ngIf="appId!='metafad'">
+          <a class="link" (click)="onAddItem.emit('entity')" *ngIf="info.features.addEntity">
+            <i class="fa fa-plus icon"></i>Aggiungi entità</a>
+        </div>
+
+        <div class="add-item" *ngIf="appId=='metafad' && !ontology.published">
+          <a class="link" [popover]="popTemplate2" placement="bottom" containerClass="link-container2" (click)="isOpen=!isOpen"
+            triggers="" [isOpen]="isOpen" [outsideClick]="true" #pop2="bs-popover" *ngIf="info.features.addEntity && activeTab=='entities'">
+            <i class="fa fa-plus icon"></i>Aggiungi
+          </a>
+
+          <a class="link" *ngIf="activeTab=='relations'" (click)="onAddItem.emit('relation')">
+            <i class="fa fa-plus icon"></i>Aggiungi
+          </a>
+        </div>
+      </div>
+
+      <div class="col-4" [class.double-col]="activeItem" [class.align-center]="appId=='metafad'"
+        *ngIf="type=='terminologies' && appId=='metafad'"></div>
+
+      <div class="col-4 terminology" *ngIf="activeItem">
+        <div class="title-container" *ngIf="appId!='metafad'">
+          <span class="label">Entità: </span>
+          <span class="title">{{activeItem.name[lang]}}</span>
+        </div>
+        <div class="title-container" *ngIf="appId=='metafad'">
+          <span class="title">Contenuti&nbsp;</span>
+          <span class="label" style="font-style: italic;">(di tipo: {{activeItem.name[lang]}})</span>
+        </div>
+        <div class="add-item">
+          <a class="link" [class.disabled]="activeItem.fromTopOntology || activeItem.ternary" (click)="addItem({type: 'terminology', fromHeader: true}, activeItem.fromTopOntology, activeItem.ternary)" *ngIf="info.features.addTerminology">
+            <i class="fa fa-plus icon"></i>Aggiungi<span *ngIf="appId!='metafad'"> termine</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="item item-menu" *ngIf="appId!='metafad'">
+      <div class="menu-container">
+        <a [popover]="popTemplate" placement="bottom" containerClass="link-container" [outsideClick]="true"
+          #pop="bs-popover">
+          <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #popTemplate>
+  <div class="link-group">
+    <div class="link-item">
+      <a *ngIf="info.features.links?.metaSemNet?.show" class="link" (click)="onOpenMetaSemNet.emit();pop.hide()">
+        <i class="fa fa-spinner icon"></i>{{info.features.links?.metaSemNet?.label}}
+      </a>
+    </div>
+    <div class="link-item">
+      <a *ngIf="info.features.links?.termExtraction?.show" class="link" (click)="goToExtraction()">
+        <i class="fa fa-quote-right icon"></i>{{info.features.links?.termExtraction?.label}}
+      </a>
+    </div>
+    <div class="link-item">
+      <a *ngIf="info.features.links?.knowledgeGraph?.show" class="link"
+        [href]="info.features.links?.knowledgeGraph?._url" target="_blank">
+        <i class="fa fa-dot-circle-o icon" aria-hidden="true"></i>{{info.features.links?.knowledgeGraph?.label}}
+      </a>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #popTemplate2>
+  <div class="link-group">
+    <div class="link-item">
+      <a class="link" (click)="addItem('entity');isOpen=false;">
+        Nuova entità
+      </a>
+    </div>
+    <div class="link-item">
+      <a class="link" (click)="addItem('topEntity');isOpen=false;">
+        Entità della Top Ontology
+      </a>
+    </div>
+  </div>
+</ng-template>

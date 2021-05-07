@@ -1,0 +1,1410 @@
+swagger: "2.0"
+info:
+  description: "Documentazione PEB"
+  version: "1.0.0"
+  title: "Documentazione PEB"
+  termsOfService: "http://swagger.io/terms/"
+host: "peb"
+basePath: "/admin/rest/ontologymanager"
+tags:
+- name: "Info"
+  description: "Servizi per info di base del PEB"
+- name: "Liste - Ricerche"
+  description: "Servizi di liste di record / ricerca"
+- name: "Editing Ontologia"
+  description: "Servizi di editing delle ontologie"
+- name: "Editing Entità"
+  description: "Servizi per editing delle entità"
+- name: "Editing Relazioni"
+  description: "Servizi per editing delle relazioni"
+- name: "Editing Istanze"
+  description: "Servizi per editing delle istanze di entità"
+- name: "Varie"
+  description: "Funzionalità varie"
+schemes:
+- "https"
+- "http"
+paths:
+  "/info":
+    get:
+      tags:
+        - "Info"
+      summary: Servizio info, descrive alcune configurazioni e valori da conoscere riguardo il PEB
+      operationId: info
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/info'
+  "/ontologies":
+    get:
+      tags:
+        - "Liste - Ricerche"
+      summary: Lista delle ontologie del sistema
+      operationId: ontologies
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ontologies'
+  "/ontology/new":
+    post:
+      tags:
+        - "Editing Ontologia"
+      summary: Servizio di creazione di una nuova
+      operationId: ontologyNew
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: body
+          name: ontology
+          description: "I dati della nuova ontologia creata"
+          schema:
+            $ref: '#/definitions/ontologyNew'
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ontology'
+  "/ontology/{ontologyId}":
+    get:
+      tags:
+        - "Editing Ontologia"
+      summary: Servizio per avere la scheda di dettaglio di un'ontologia
+      operationId: ontologyDetail
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ontology'
+    post:
+      tags:
+        - "Editing Ontologia"
+      summary: Servizio per modificare i dati di un'ontologia
+      operationId: ontologyEdit
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: body
+          name: ontology
+          description: "I dati da inserire nell'ontologia"
+          schema:
+            $ref: '#/definitions/ontology'
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/ontology'
+    delete:
+      tags:
+        - "Editing Ontologia"
+      summary: Servizio per cancellare un'ontologia e i suoi contenuti
+      operationId: ontologyDelete
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+  "/ontology/{ontologyId}/publish":
+    post:
+      tags:
+        - "Editing Ontologia"
+      summary: Servizio per pubblicare un dominio
+      operationId: ontologyPublish
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+  "/ontologyContents/{ontologyId}":
+    delete:
+      tags:
+        - "Editing Ontologia"
+      summary: Servizio per cancellare tutte le istanze di un'ontologia.
+      operationId: ontologyContentsDelete
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+  "/search/{ontologyId}/entities":
+    post:
+      tags:
+        - "Liste - Ricerche"
+      summary: Servizio di ricerca per la lista di entità di un'ontologia
+      operationId: entitiesSearch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: body
+          name: search
+          description: "I dati di ricerca"
+          schema:
+            $ref: '#/definitions/search'
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/entitiesSearchResult'
+  "/search/{ontologyId}/relations":
+    post:
+      tags:
+        - "Liste - Ricerche"
+      summary: Servizio di ricerca per la lista di relazioni di un'ontologia
+      operationId: relationsSearch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: body
+          name: search
+          description: "I dati di ricerca"
+          schema:
+            $ref: '#/definitions/searchBasic'
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/relationsSearchResult'
+  "/getOntologyGraph":
+    get:
+      tags:
+        - "Varie"
+      summary: Servizio per ottenere un json utile per la visualizzazione grafica dell'ontologia in WebVOWL
+      operationId: ontologyGraph
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: query
+          name: uri
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Viene fornito un json utilizzabile dalla libreria WebVOWL per una visualizzazione grafica dell'ontologia (http://www.visualdataweb.de/webvowl/). Non è utile descrivere il json in questa documentazione. Per ogni dubbio si può visitare http://www.visualdataweb.org
+  "/entity-properties/{entityId}":
+    get:
+      tags:
+        - "Editing Entità"
+      summary: Servizio per ottenere la scheda di dettaglio di un entità
+      operationId: entityProperties
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: entityId
+          description: "Id dell'entità"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/entityObjectDetail'
+  "/entity-graph/{entityId}":
+    get:
+      tags:
+        - "Editing Entità"
+      summary: Servizio per ottenere un grafo riassuntivo delle relazioni dell'entità in "DOT Language".
+      operationId: entityGraph
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: entityId
+          description: "Id dell'entità"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Non verrà fornito un esempio di risposta in quanto difficilmente può essere spiegato in poche righe. Vedi https://graphviz.org/ per la documentazione.
+  "/terminology-graph/{terminologyId}":
+    get:
+      tags:
+        - "Editing Istanze"
+      summary: Servizio per ottenere un grafo riassuntivo delle relazioni dell'istanza in "DOT Language".
+      operationId: terminologyGraph
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: terminologyId
+          description: "Id della terminologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Non verrà fornito un esempio di risposta in quanto difficilmente può essere spiegato in poche righe. Vedi https://graphviz.org/ per la documentazione.
+  "/item/{ontologyId}":
+    post:
+      tags:
+        - "Editing Entità"
+        - "Editing Istanze"
+        - "Editing Relazioni"
+      summary: "Servizio per creare/modificare un oggetto dell'ontologia, indistintamente dalla sua tipologia."
+      description: "Servizio per salvare un oggetto dell'ontologia, indistintamente dalla sua tipologia. Nell'esempio di body da mandare in chiamata sarà mostrato un entityObjectDetail, ma tutti gli altri model *Object sono validi per un salvataggio. Se non si manda nel json il campo *id* valorizzato, il sistema considerà l'oggetto come nuovo oggetto. \r\n\r\nNOTA: se si mandano in salvataggio alcuni campi come lastModified o terminologies, questi semplicemente non verrano salvati, sono campi calcolati dinamicamente. Inviarli non genererà comunque errori. Generalmente invece è possibile salvare qualsiasi altro campo non presente nel model, questo sarà memorizzato e restituito dai servizi di dettaglio."
+      operationId: saveItem
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: body
+          name: item
+          description: "Oggetto sa salvere"
+          schema:
+            $ref: '#/definitions/entityObjectDetail'
+      responses:
+        '200':
+          description: In risposta ci sarà l'oggetto salvato come conferma (che solitamente corrisponde a quello che si è inviato). Se è un nuovo oggetto si troverà in aggiunta ad esempio il campo *id*
+          schema:
+            $ref: '#/definitions/entityObjectDetail'
+  "/entity/{ontologyId}/{entityId}":
+    delete:
+      tags:
+        - "Editing Entità"
+      summary: Servizio per cancellare un'entità
+      operationId: entityDelete
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: path
+          name: entityId
+          description: "Id dell'entità"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+  "/terminology/{ontologyId}/{terminologyId}":
+    delete:
+      tags:
+        - "Editing Istanze"
+      summary: "Servizio per cancellare l'istanza di un'entità"
+      operationId: terminologyDelete
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: path
+          name: terminologyId
+          description: "Id dell'istanza da cancellare"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+  "/deletingInfo/{ontologyId}/{entityId}":
+    get:
+      tags:
+        - "Editing Entità"
+      summary: "Servizio con indicazioni di eventuali incongruenze in cancellazione"
+      description: "Servizio con indicazioni di eventuali incongruenze che si potrebbero creare internamente all'ontologia in caso di cancellazione di un'entità. Il servizio è utile se le cancellazioni si svolgono da interfaccia per mostrare all'utente se andrà a creare qualche problema interno e avvisarlo che questi problemi andranno poi risolti a mano dall'utente stesso"
+      operationId: deletingInfo
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: path
+          name: entityId
+          description: "Id dell'entità"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: In caso di incongruenze sarà mostrato un html descrittivo.
+  "/entityContents/{ontologyId}/{entityId}":
+    delete:
+      tags:
+        - "Editing Entità"
+      summary: Servizio per cancellare tutte le istanze di un'entità.
+      operationId: entityContentsDelete
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: path
+          name: entityId
+          description: "Id dell'entità"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+  "/getUri/{ontologyId}/{type}":
+    get:
+      tags: 
+        - "Varie"
+      summary: "Servizio per generazione automatica di URI di un oggetto"
+      description: "Dato un tipo di oggetto e un testo verrà generato in automatico un URI, con alcune espressioni regolari per renderlo valido."
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: path
+          name: type
+          description: "Tipo dell'oggetto"
+          type: string
+          enum:
+            - ontology
+            - terminology
+            - entity
+            - relation
+            - property
+          required: true
+        - in: query
+          type: string
+          name: text
+          description: Testo da cui generare URI
+      responses: 
+        '200':
+          description: Success
+          schema:
+            type: object
+            properties:
+              uri:
+                type: string
+                description: L'URI generato. Se *false* significa che non il nome passato in *text* genera un URI duplicato.
+                example: "http://semantic.icariccu.it/ontologies/ontology/terminology/Nome_oggetto"
+  "/entity-terminologies/{ontologyId}/{entityId}":
+    post:
+      tags:
+        - "Liste - Ricerche"
+      summary: Servizio di ricerca per la lista di istanze di una certa entità
+      operationId: terminologiesSearch
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: path
+          name: entityId
+          description: "Id dell'entità"
+          type: string
+          required: true
+        - in: body
+          name: search
+          description: "I dati di ricerca"
+          schema:
+            $ref: '#/definitions/searchBasic'
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/terminologiesSearchResult'
+  "/autocompleteRelation/{relationId}/{search}":
+    get:
+      tags:
+          - "Editing Istanze"
+      summary: Servizio per la compilazione di relazioni all'interno di istanze
+      description: Il servizio restituisce tutte le istanze di entità che sono codominio di una data relazione. Con il parametro *search* è possibile filtrarle.
+      operationId: autocompleteRelation
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: relationId
+          description: "Id della relazione"
+          type: string
+          required: true
+        - in: path
+          name: search
+          description: "Testo per filtrare risultati"
+          type: string  
+          required: true
+          default: ""
+      responses:
+        '200':
+          description: Success
+          schema: 
+            type: array
+            items:
+              type: object
+              properties:
+                id:
+                  type: string
+                  description: Uuid dell'istanza
+                value:
+                  type: string
+                  description: Nome dell'istanza
+  "/searchSolr/terminologies/{ontologyId}":
+    post:
+      tags:
+        - "Liste - Ricerche"
+      summary: Servizio di ricerca per la lista di istanze dell'intera ontologia (via SOLR)
+      operationId: terminologiesSearchSolr
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+        - in: body
+          name: search
+          description: "I dati di ricerca"
+          schema:
+            $ref: '#/definitions/searchBasicFacets'
+      responses:
+        '200':
+          description: Success
+          schema: 
+            $ref: '#/definitions/terminologiesSearchResultSolr'
+  "/import":
+    get:
+      tags:
+        - "Varie"
+      summary: Import di ontologie
+      operationId: import
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: query
+          name: ontologyId
+          description: "Id dell'ontologia dentro la quale importare l'owl"
+          type: string
+        - in: query
+          name: file
+          description: "Percorso per il file OWL o ZIP contenente un OWL"
+          type: string
+      responses:
+        '200':
+          description: Id dell'ontologia
+          schema:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Uuid dell'ontologia
+  "/export":
+    get:
+      tags:
+        - "Varie"
+      summary: Export di ontologie
+      operationId: export
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: query
+          name: id
+          description: "Id dell'ontologia"
+          type: string
+        - in: query
+          name: model
+          description: Se *true* viene esportato solo il modello, altrimenti anche tutte le istanze.
+          type: boolean
+      responses:
+        '200':
+          description: OWL dell'ontologia
+  "/reindexSolr/{ontologyId}":
+    get:
+      tags:
+        - "Varie"
+      summary: Reindicizzazione di un'ontologia su SOLR
+      operationId: ontologyReindexSolr
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters: 
+        - in: path
+          name: ontologyId
+          description: "Id dell'ontologia"
+          type: string
+          required: true
+      responses:
+        '200':
+          description: Success
+definitions:
+  info:
+    type: object
+    properties:
+      labels:
+        type: object
+        description: Un oggetto dove le chiavi sono stringhe in inglese e il valore è la loro traduzione in italiano. Serve all'applicazione per la traduzione delle etichette
+        additionalProperties:
+          type: string
+        example:
+          {entity: "Entità", terminology: "Terminologia"}
+      topDomain:
+        type: string
+        description: Identificativo della Top Domain Ontology
+        example:
+          "e1c5a64d-11e4-495d-b868-4af85089d062"
+      features:
+        type: object
+        description: Lista di indicazioni sui permessi di editing dei record
+        properties:
+          addOntology:
+            type: boolean
+            description: Indica se l'utente può creare/editare domini
+          addEntity:
+            type: boolean
+            description: Indica se l'utente può creare/editare entità
+          addTerminology:
+            type: boolean
+            description: Indica se l'utente può creare/editare terminologie
+      links:
+        type: array
+        description: Lista di link necessari all'applicazione per collegamenti esterni
+        items:
+          type: object
+          description: Nome - link
+          additionalProperties:
+            type: string
+          example:
+            {dam: "http://dam"}
+      user:
+        type: object
+        description: Descrizione dell'utente attivo
+        properties:
+          type:
+            description: Tipo di utente
+            type: string
+            example:
+              "all"
+  ontologies:
+    type: array
+    items:
+      $ref: "#/definitions/ontology"
+  ontology:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Id dell'ontologia
+        example:
+          "e1c5a64d-11e4-495d-b868-4af85089d062"
+      name:
+        type: object
+        description: "Nome dell'ontologia, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome ontologia"}
+      lastModified:
+        type: string
+        description: Data di ultima modifica
+        example: "22/02/2021 14:35:51"
+      items:
+        type: array
+        description: Lista di oggetti contenuti, generalmente vuoto
+        items:
+          type: string
+      imported:
+        type: array
+        description: "riferimento ad ontologie importate in fase di importazione della stessa ontologia, generalmente vuoto"
+        items:
+          type: string
+      entities:
+        type: integer
+        description: quantità delle entità contenute nell'entità
+      terminology:
+        type: integer
+        description: quantità delle istanze di entità contenute nell'entità
+      derivedFrom:
+        type: array
+        description: "Lista di URI di ontologie da cui l'ontologia deriva, generalmente compilato se l'ontologià è stata importata"
+        items:
+          type: string
+      ontologySite:
+        type: string
+        description: "Sito dell'ontologia (compilabile solo in fase di import)"
+      ontologyUrl:
+        type: string
+        description: "URL dell'ontologia (compilabile solo in fase di import)"
+      description:
+        type: string
+        description: "Descrizione dell'ontologia"
+      acronym:
+        type: string
+        description: "Acronimo dell'ontologia"
+      reference:
+        type: string
+        description: "Nome di riferimento (per gli indici)"
+  ontologyNew:
+    type: object
+    properties:
+      acronym:
+        type: string
+        description: "Acronimo dell'ontologia"
+      description:
+        type: string
+        description: "Descrizione dell'ontologia"
+      name:
+        type: object
+        description: "Nome dell'ontologia, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome ontologia"}
+      reference:
+        type: string
+        description: "Nome di riferimento (per gli indici)"
+  search:
+    type: object
+    properties:
+      fromTop:
+        type: boolean
+        description: Flag per indicare se mostrare anche le entità in riuso da top ontology
+        default: true
+      page:
+        type: integer
+        description: Pagina dei risultati da mostrare
+        default: 1
+      limit:
+        type: integer
+        description: Numero di risultati da mostrare per pagina
+        default: 10
+      search:
+        type: string
+        description: Stringa di ricerca (se null mostra tutti i risultati senza filtrarli)
+        default: ""
+  searchBasic:
+    type: object
+    properties:
+      page:
+        type: integer
+        description: Pagina dei risultati da mostrare
+        default: 1
+      limit:
+        type: integer
+        description: Numero di risultati da mostrare per pagina
+        default: 10
+      search:
+        type: string
+        description: Stringa di ricerca (se null mostra tutti i risultati senza filtrarli)
+        default: ""
+  searchBasicFacets:
+    type: object
+    properties:
+      page:
+        type: integer
+        description: Pagina dei risultati da mostrare
+        default: 1
+      limit:
+        type: integer
+        description: Numero di risultati da mostrare per pagina
+        default: 10
+      search:
+        type: string
+        description: Stringa di ricerca (se null mostra tutti i risultati senza filtrarli)
+        default: ""
+      facets:
+        type: object
+        description: Lista delle entità per le quali filtrare la ricerca
+        properties:
+          entity_s:
+            type: array
+            items:
+              type: string
+              example: Nome entità
+  entitiesSearchResult:
+    type: object
+    properties:
+      records:
+        type: array
+        items:
+          $ref: '#/definitions/entityObject'
+      searchApplied:
+        $ref: '#/definitions/search'
+  entityObject:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Id dell'entità
+        example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#48ead017-31dc-4324-a4da-161298234cab"
+      name:
+        type: object
+        description: "Nome dell'entità, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome entità"}
+      lastModified:
+        type: string
+        description: Data di ultima modifica
+        example: "22/02/2021 14:35:51"
+      properties:
+        type: integer
+        description: Quantità di proprietà di cui è composta l'entità
+        example: 10
+      relations:
+        type: integer
+        description: Quantità di relazioni di cui è composta l'entità
+        example: 10
+      hidden:
+        type: boolean
+        description: Indica se l'entità è nascosta, generalmente false
+      type:
+        type: string
+        description: Tipo dell\'oggetto (in questo caso sempre "entity", necessario all\'applicazione per la gestione di alcune casistiche)
+        default: entity
+      labels:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      uri:
+        type: string
+        description: Uri dell'entità
+        example: "http://semantic.icariccu.it/ontologies/NomeOntologia/entity/NomeEntità"
+      orders:
+        type: object
+        description: Indica l'ordinamento delle proprietà e relazioni
+        properties:
+          props:
+            type: array
+            description: Array di uuid ordinati dalla prima all'ultima proprietà
+            items:
+              type: string
+              example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#a9683f21-75f9-48da-9b44-14842eed826a"
+          relations:
+            type: array
+            description: Array di uuid ordinati dalla prima all'ultima relazione
+            items:
+              type: string
+              example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#ce252775-a9f1-4b5e-a44f-1ea601de8070"
+      superclass:
+        type: object
+        description: Eventuale superclass dell'entità
+        properties:
+          value:
+            type: string
+            description: Uuid della superclass
+            example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#ab9bbe66-5483-46b1-a11f-b66d4d39d35d"
+      copiedProperties:
+        type: array
+        description: Eventuali proprietà/relazioni copiate da altre entità
+        items:
+          type: string
+          description: Uuid della proprietà/relazione
+          example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#a9683f21-75f9-48da-9b44-14842eed826a"
+      facilitated:
+        type: boolean
+        description: Boolean che indica se è stata abilitata la compilazione abilitata nell'applicazione
+        example: true
+      ternary:
+        type: boolean
+        description: Boolean che indica se l'entità è stata abilitata come ternaria
+        example: false
+      automaticTitle:
+        type: boolean
+        description: Boolean che indica se la composizione automatica delle istanze di questa entità è abilitata
+      terminologies:
+        type: integer
+        description: Numero di istanze dell'entità
+        example: 10
+  entityObjectDetail:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Id dell'entità
+        example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#48ead017-31dc-4324-a4da-161298234cab"
+      name:
+        type: object
+        description: "Nome dell'entità, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome entità"}
+      lastModified:
+        type: string
+        description: Data di ultima modifica
+        example: "22/02/2021 14:35:51"
+      properties:
+        type: array
+        description: Lista di proprietà/relazioni dell'entità (per un riferimento alle relazioni vedi il model relationObject)
+        items:
+          $ref: '#/definitions/propertyObject'
+      hidden:
+        type: boolean
+        description: Indica se l'entità è nascosta, generalmente false
+      type:
+        type: string
+        description: Tipo dell\'oggetto (in questo caso sempre "entity", necessario all\'applicazione per la gestione di alcune casistiche)
+        default: entity
+      labels:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      uri:
+        type: string
+        description: Uri dell'entità
+        example: "http://semantic.icariccu.it/ontologies/NomeOntologia/entity/NomeEntità"
+      orders:
+        type: object
+        description: Indica l'ordinamento delle proprietà e relazioni
+        properties:
+          props:
+            type: array
+            description: Array di uuid ordinati dalla prima all'ultima proprietà
+            items:
+              type: string
+              example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#a9683f21-75f9-48da-9b44-14842eed826a"
+          relations:
+            type: array
+            description: Array di uuid ordinati dalla prima all'ultima relazione
+            items:
+              type: string
+              example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#ce252775-a9f1-4b5e-a44f-1ea601de8070"
+      superclass:
+        type: object
+        description: Eventuale superclass dell'entità
+        properties:
+          value:
+            type: string
+            description: Uuid della superclass
+            example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#ab9bbe66-5483-46b1-a11f-b66d4d39d35d"
+      copiedProperties:
+        type: array
+        description: Eventuali proprietà/relazioni copiate da altre entità
+        items:
+          type: string
+          description: Uuid della proprietà/relazione
+          example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#a9683f21-75f9-48da-9b44-14842eed826a"
+      facilitated:
+        type: boolean
+        description: Boolean che indica se è stata abilitata la compilazione abilitata nell'applicazione
+        example: true
+      ternary:
+        type: boolean
+        description: Boolean che indica se l'entità è stata abilitata come ternaria
+        example: false
+      automaticTitle:
+        type: boolean
+        description: Boolean che indica se la composizione automatica delle istanze di questa entità è abilitata
+      terminologies:
+        type: integer
+        description: Numero di istanze dell'entità
+        example: 10
+  terminologiesSearchResult:
+    type: object
+    properties:
+      records:
+        type: array
+        items:
+          $ref: '#/definitions/terminologyObject'
+      searchApplied:
+        $ref: '#/definitions/searchBasic'
+  terminologiesSearchResultSolr:
+    type: object
+    properties:
+      records:
+        type: array
+        items:
+          $ref: '#/definitions/terminologyFromSolr'
+      facets:
+        type: object
+        properties:
+          entity_s:
+            type: object
+            properties:
+              label:
+                type: string
+                description: Etichetta per la faccetta
+                default: Entità
+              values:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    value: 
+                      type: string
+                      description: Valore della faccetta
+                    total:
+                      type: integer
+                      description: Occorrenze della faccetta nei risultati
+                      example: 10
+      searchApplied:
+        $ref: '#/definitions/searchBasicFacets'
+  terminologyObject:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Uuid dell'istanza
+      name:
+        type: object
+        description: "Nome dell'istanza, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome istanza"}
+      lastModified:
+        type: string
+        description: Data di ultima modifica
+        example: "22/02/2021 14:35:51"
+      type:
+        type: string
+        description: Tipo dell\'oggetto (in questo caso sempre "terminology")
+      superclass:
+        type: object
+        description: Indica l'entità di cui questo oggetto è istanza
+        properties:
+          value:
+            type: string
+            description: Uuid della superclass
+            example: "be3c59cc-71ff-4f64-a3e2-912d9595e559#ab9bbe66-5483-46b1-a11f-b66d4d39d35d"
+      labels:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      content:
+        type: array
+        items:
+          $ref: '#/definitions/terminologyContent'
+      uriName:
+        type: string
+        description: Campo utilizzato per la generazione dell'URI
+      uri:
+        type: string
+        description: URI dell'istanza
+  terminologyFromSolr:
+    type: object
+    description: "L'oggetto in questione varia a seconda del mapping fatto sull'indice di ricerca, ma alcuni campi sono presenti di default e si trovano descritti in questo modello."
+    properties:
+      id:
+        type: string
+        description: Uuid dell'istanza
+      name_s:
+        type: string
+        description: Nome dell'istanza
+      ontologyId_s:
+        type: string
+        description: Uuid dell'ontologia
+      entity_s:
+        type: string
+        description: Nome dell'entità
+      entityId_s:
+        type: string
+        description: Uuid dell'entità
+      uri_s:
+        type: string
+        description: Uri dell'istanza
+      fulltext_txt:
+        type: array
+        description: Array di stringhe per la ricerca fulltext
+        items:
+          type: string
+      timestamp:
+        type: string
+        description: Data di inserimento nell'indice Solr
+      data_creazione_s:
+        type: string
+        description: Data di creazione del record
+  terminologyContent:
+    type: object
+    properties:
+      type:
+        type: string
+        description: Tipo di contenuto
+        enum:
+          - property
+          - relation
+      name:
+        type: object
+        description: "Nome del contenuto"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome contenuto"}
+      mandatory:
+        type: boolean
+        description: "Indica se la compilazione del contenuto è obbligatoria o meno"
+        example: false
+      multivalue:
+        type: boolean
+        description: "Indica se il contenuto è multivalore o meno"
+        example: true
+      domain:
+        type: array
+        description: Array che indica la lista delle entità che sono dominio della relazione
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Uuid dell'entità
+            value:
+              type: string
+              description: Nome dell'entità
+      reverseOf:
+        type: object
+        description: Eventuale relazione di cui questa relazione in oggetto è inversa
+        properties:
+          id:
+            type: string
+            description: Uuid dell'entità
+          value:
+            type: string
+            description: Nome dell'entità
+      codomain:
+        type: array
+        description: Array che indica la lista delle entità che sono codominio della relazione
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Uuid dell'entità
+            value:
+              type: string
+              description: Nome dell'entità
+      labels:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      uri:
+        type: string
+        description: Uri dell'entità
+        example: "http://semantic.icariccu.it/ontologies/NomeOntologia/entity/NomeEntità"
+      items:
+        type: array
+        items:
+          type: object
+          description: Valori del contenuto
+  relationsSearchResult:
+    type: object
+    properties:
+      records:
+        type: array
+        items:
+          $ref: '#/definitions/relationObject'
+      searchApplied:
+        $ref: '#/definitions/searchBasic'
+  relationObject:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Uuid della relazione
+      type:
+        type: string
+        description: Tipo dell'oggetto (in questo caso sempre "relation")
+        example: relation
+      name:
+        type: object
+        description: "Nome della relazione, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome relazione"}
+      mandatory:
+        type: boolean
+        description: "Indica se la compilazione della relazione è obbligatoria o meno"
+        example: false
+      multivalue:
+        type: boolean
+        description: "Indica se la relazione è multivalore o meno"
+        example: true
+      domain:
+        type: array
+        description: Array che indica la lista delle entità che sono dominio della relazione
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Uuid dell'entità
+            value:
+              type: string
+              description: Nome dell'entità
+      reverseOf:
+        type: object
+        description: Eventuale relazione di cui questa relazione in oggetto è inversa
+        properties:
+          id:
+            type: string
+            description: Uuid dell'entità
+          value:
+            type: string
+            description: Nome dell'entità
+      codomain:
+        type: array
+        description: Array che indica la lista delle entità che sono codominio della relazione
+        items:
+          type: object
+          properties:
+            id:
+              type: string
+              description: Uuid dell'entità
+            value:
+              type: string
+              description: Nome dell'entità
+      labels:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      readOnly:
+        type: boolean
+        description: Indica se la relazione è readOnly o meno. Questo valore dipende dalla presenza di istanze che utilizzano già questa relazione. Se ce ne sono, la relazione sarà readOnly
+      uri: 
+        type: string
+        description: Uri della relazione
+      order:
+        type: integer
+        description: Ordine della relazione nell'entità di appartenenza
+      canDelete:
+        type: boolean
+        description: Indica se la relazione è cancellabile. Questo valore dipende dalla presenza di istanze che utilizzano già questa relazione. Se ce ne sono, la relazione non sarà cancellabile.
+  propertyObject:
+    type: object
+    properties:
+      id:
+        type: string
+        description: Uuid della proprietà
+      type:
+        type: string
+        description: Tipo dell'oggetto (in questo caso sempre "property")
+        default: property
+      name:
+        type: object
+        description: "Nome della proprietà, è un oggetto con chiave la lingua di inserimento"
+        additionalProperties:
+          type: string
+        example:
+          {it: "Nome relazione"}
+      mandatory:
+        type: boolean
+        description: "Indica se la compilazione della proprietà è obbligatoria o meno"
+        example: false
+      multivalue:
+        type: boolean
+        description: "Indica se la proprietà è multivalore o meno"
+        example: true
+      labels:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      descriptions:
+        type: array
+        items:
+          $ref: '#/definitions/translatedItems'
+      readOnly:
+        type: boolean
+        description: Indica se la proprietà è readOnly o meno. Questo valore dipende dalla presenza di istanze che utilizzano già questa relazione. Se ce ne sono, la proprietà sarà readOnly
+      uri: 
+        type: string
+        description: Uri della proprietà
+      value: 
+        type: object
+        description: Indica il tipo di proprietà
+        properties:
+          id:
+            type: string
+            description: Uri che indica il tipo di proprietà
+            example: "http://peb.icariccu.it/standard/fieldLongText"
+          type:
+            type: string
+            description: Etichetta del tipo di proprietà
+            example: Testo lungo
+      order:
+        type: integer
+        description: Ordine della proprietà nell'entità di appartenenza
+        example: 1
+  translatedItems:
+    type: object
+    properties:
+      order:
+        type: integer
+        description: Ordine dell'etichetta
+        example: 1
+      name:
+        type: string
+        description: Valore dell'etichetta
+        example: Valore
+      lang:
+        type: string
+        description: Lingua d'inserimento
+        example: ita

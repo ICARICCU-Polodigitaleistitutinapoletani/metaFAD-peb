@@ -1,0 +1,232 @@
+<div class="editv2-component {{appId}}">
+
+  <div class="row row-header">
+    <nav class="col-12" aria-label="breadcrumb" role="navigation">
+      <app-breadcrumb [title]="'Gestione ontologie'" [ontology]="ontology" (onFocus)="onNameFocus($event)"
+        (onBlur)="onNameBlur($event)" (onTitleClick)="goToList()" *ngIf="appId!='metafad'"></app-breadcrumb>
+      <app-breadcrumb [items]="headers" *ngIf="appId=='metafad'"></app-breadcrumb>
+    </nav>
+  </div>
+
+  <tabset *ngIf="type==='entities' && appId=='metafad'">
+    <tab heading="Entità" (deselect)="onDeselect($event)">
+      <ng-container *ngTemplateOutlet="list"></ng-container>
+    </tab>
+    <tab heading="Relazioni" (deselect)="onDeselect($event)">
+      <ng-container *ngTemplateOutlet="list"></ng-container>
+    </tab>
+  </tabset>
+
+  <tabset *ngIf="type==='terminologies' && appId=='metafad'">
+    <tab heading="Entità" (deselect)="onDeselect2($event)">
+      <ng-container *ngTemplateOutlet="list"></ng-container>
+    </tab>
+    <tab heading="Ricerca" (deselect)="onDeselect2($event)">
+      <ng-container *ngTemplateOutlet="list"></ng-container>
+    </tab>
+  </tabset>
+
+  <ng-container *ngIf="appId!='metafad'">
+    <ng-container *ngTemplateOutlet="list"></ng-container>
+  </ng-container>
+</div>
+
+<app-metasemnet [path]="metaSemNetPath" [onOpen]="onOpenMetaSemNet" (onClose)="onCloseMetaSemNet($event)">
+</app-metasemnet>
+
+<ng-template #list>
+  <div class="card card-shadow card-base main-card-full mb-3" *ngIf="items.length || activeItem || appId==='metafad'">
+
+    <app-header [info]="info" [ontology]="ontology" [activeItem]="activeItem" [activeTab]="activeTab" [onTabChange]="onTabChange"
+      (onViewChange)="onViewChange($event)" (onAddItem)="onAddItem($event)" (onOpenMetaSemNet)="openMetaSemNet()"
+      style="height:50px;" [type]="type" *ngIf="activeTab!=='search'">
+    </app-header>
+
+    <div class="card-body" *ngIf="!enableMap && (items.length || activeItem || searchApplied.search)">
+      <div class="row centered">
+
+
+
+
+
+        <aside class="searchfilters col-sm-2" style="border-right: 2px solid #ccc;min-width: 250px;"
+          *ngIf="activeTab==='search' && facets && (objectKeys(facets).length || (searchApplied && searchApplied.facets && objectKeys(searchApplied.facets).length))">
+          <div class="selected-facet" *ngIf="searchApplied && searchApplied.facets && objectKeys(searchApplied.facets).length" style="margin-top: 10px;">
+            <ng-container *ngFor="let key of objectKeys(searchApplied.facets)">
+              <div *ngFor="let value of searchApplied.facets[key]">
+                <a (click)="removeFacet(key, value)" >
+                  <i class="fa fa-remove icon icon-v3" aria-hidden="true"></i>
+                  {{facetsMap[key]}}: {{value}}
+                </a>
+              </div>
+            </ng-container>
+          </div>
+          <div class="facets" *ngIf="objectKeys(facets).length" style="margin-top: 10px;">
+            <section class="facetgroup" *ngFor="let key of objectKeys(facets)">
+              <h4>{{facets[key].label}}</h4>
+              <div *ngFor="let value of facets[key].values | slice:0:facets[key].max">
+                <a (click)="selectFacet(key, value.value, facets[key].label)" >
+                  <!-- <i class="fa fa-plus icon icon-v3" aria-hidden="true"></i>  -->
+                  {{value.value}} ({{value.total}})
+                </a>
+              </div>
+              <div style="margin-top: 10px;">
+                <a [hidden]="facets[key].values.length<=visibleFacets || facets[key].max>visibleFacets" (click)="facets[key].max=facets[key].values.length">
+                  <i class="fa fa-angle-down icon icon-v3" aria-hidden="true"></i> <span>Mostra altri</span>
+                </a>
+                <a [hidden]="facets[key].values.length<=visibleFacets || facets[key].max===visibleFacets" (click)="facets[key].max=visibleFacets">
+                  <i class="fa fa-angle-up icon icon-v3" aria-hidden="true"></i> <span>Mostra meno</span>
+                </a>
+              </div>
+            </section>
+          </div>
+        </aside>
+
+
+
+        <div class="col-6" style="min-width: 450px;">
+          <div class="aside-left list-container">
+
+            <app-list *ngIf="activeTab!=='search'" [items]="items" [superclass]="superclass" [activeItem]="activeItem"
+              [type]="type" (onSearch)="onSearch($event, activeTab)" (onEditItem)="onEditItem($event)"
+              (onDeleteItem)="onDeleteItem($event)" (onAddItem)="onAddItem($event)"
+              (onDeleteContents)="onDeleteContents($event)" [ontology]="ontology"
+              (onCreateReverse)="onCreateReverse($event)">
+            </app-list>
+
+            <app-list *ngIf="activeTab==='search'" [items]="items" [superclass]="superclass"
+              (onSearch)="onSolrSearch($event)" (onEditItem)="onEditRightItem($event)"
+              (onDeleteItem)="onDeleteItem($event)">
+            </app-list>
+
+            <ng-container *ngIf="searchApplied.limit < searchApplied.tot">
+              <app-pagination [pages]="pagination.pages" [current]="pagination.page-1" [change]="pagination.change"
+                (onChange)="onChangePage($event, 'entities')" *ngIf="activeTab!=='search'">
+              </app-pagination>
+              <app-pagination [pages]="pagination.pages" [current]="pagination.page-1" [change]="pagination.change"
+                (onChange)="onChangeSolrPage($event)" *ngIf="activeTab==='search'">
+              </app-pagination>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="col-6" style="min-width: 450px;"
+          *ngIf="rightItems || (rightSearchApplied && rightSearchApplied.search)">
+          <div class="aside-left list-container">
+
+            <app-list [items]="rightItems" [superclass]="superclass" (onSearch)="onRightSearch($event)"
+              (onEditItem)="onEditRightItem($event)" (onDeleteItem)="onDeleteItem($event)"
+              *ngIf="rightItems.length || rightSearchApplied.search">
+            </app-list>
+
+            <div class="empty-terminology" *ngIf="!rightItems.length && !rightSearchApplied.search">
+              <a (click)="addTerminology(null, null, null, activeItem.fromTopOntology)"
+                [class.disabled]="activeItem.fromTopOntology">
+                <i class="fa fa-plus icon" aria-hidden="true"></i>
+                <span *ngIf="appId!='metafad'">Aggiungi termine</span>
+                <span *ngIf="appId=='metafad'">Aggiungi contenuto</span>
+              </a>
+            </div>
+
+            <ng-container *ngIf="rightSearchApplied.limit < rightSearchApplied.tot">
+              <app-pagination [pages]="rightPagination.pages" [current]="rightPagination.page-1"
+                [change]="rightPagination.change" (onChange)="onChangeRightPage($event)">
+              </app-pagination>
+            </ng-container>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-body map-card" *ngIf="enableMap && (items.length || activeItem)">
+      <app-map [class.col-12]="!selectedNode" [class.col-9]="selectedNode" [map]="map"
+        [ontologyName]="ontology.name[lang]" (onClickNode)="onClickNode($event)"></app-map>
+      <div class="col-3 selected-node" *ngIf="selectedNode">
+
+        <div class="row-entity">
+          <div>
+            <h5 class="card-title" style="font-size: 15px;font-style: italic;">{{selectedNode.name[lang]}}</h5>
+            <!-- <h6 class="card-subtitle">{{selectedNode.uri || selectedNode.id}}</h6> -->
+          </div>
+          <div>
+            <i (click)="onEditItem({type: 'entity', id: selectedNode.id})" class="fa fa-pencil icon" aria-hidden="true"
+              style="width: 15px;margin-right: 10px;"></i>
+            <!-- <span class="text-secondary">Modifica</span> -->
+          </div>
+        </div>
+
+        <div>
+          <div class="form-input-btn form-input-btn-icon properties-container" style="margin-bottom: 20px;"
+            *ngIf="selectedNode.terminologies && selectedNode.terminologies.length">
+
+            <div class="form-group row no-gutters row-terminology"
+              *ngFor="let terminology of selectedNode.terminologies let last = last;" [ngClass]="{'last-row': last}">
+              <div class="card flex">
+                <div class="title-group map-entity-title">
+                  <h5 class="card-title" style="font-size: 15px;"><a
+                      (click)="editTerminology(terminology)">{{terminology.name[lang]}}</a></h5>
+                  <!-- <h6 class="card-subtitle">{{terminology.uri || terminology.id}}</h6> -->
+                </div>
+                <div class="flex" style="width: 120px;">
+                  <ul class="list-inline list-terminology"
+                    *ngIf="info.user.type==='all' || info.user.type==='terminology'">
+                    <!-- <li class="list-inline-item">
+                      <i (click)="edit(terminology)" class="fa fa-pencil icon" aria-hidden="true" style="width: 15px;"></i>
+                      <span class="text-secondary">Modifica</span>
+                    </li>
+                    <li class="list-inline-item">
+                      <span class="divider"></span>
+                    </li> -->
+                    <li *ngIf="terminology.complete" class="list-inline-item">
+                      <a class="complete" style="font-size: 12px;">Scheda completa</a>
+                    </li>
+                    <li *ngIf="!terminology.complete" class="list-inline-item">
+                      <a class="no-complete" style="font-size: 12px;">Scheda non completa</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <ng-container *ngIf="selectedNode.searchApplied.limit < selectedNode.searchApplied.tot">
+            <app-pagination [pages]="selectedNode.pagination.pages" [current]="selectedNode.pagination.page-1"
+              [change]="selectedNode.pagination.change" (onChange)="onChangePageMap($event)">
+            </app-pagination>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-body" *ngIf="!items.length && !activeItems && !searchApplied.search">
+      <div class="row centered" style="margin-top: 20px;">
+        <span style="font-size: 18px;text-align: center;">Nell'ontologia del portale non sono al momento
+          <br>presenti {{ activeTab=='entities' ? 'entità' : 'relazioni' }}.</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="card card-shadow card-base main-card-full mb-3 empty-ontology"
+    *ngIf="!items.length && !activeItem && appId!='metafad'">
+    <div class="empty-icon">
+      <i class="fa fa-coffee" aria-hidden="true"></i>
+    </div>
+    <div class="empty-text">
+      Ontologia vuota, <br>utilizza uno degli strumenti per creare entità o termini.
+    </div>
+    <div class="empty-btn">
+      <div class="btn btn-no-bg btn-icon-text" (click)="addEntity()">
+        <i class="fa fa-plus icon" aria-hidden="true"></i>Aggiungi entità
+      </div>
+      <!-- <div class="btn btn-no-bg btn-icon-text" (click)="addConcept()">
+        <i class="fa fa-plus icon" aria-hidden="true"></i>Aggiungi termine
+      </div> -->
+      <div class="btn btn-no-bg btn-icon-text" (click)="goToExtraction()">
+        <i class="fa fa-quote-right icon" aria-hidden="true"></i>Estrazione terminologica
+      </div>
+    </div>
+  </div>
+</ng-template>

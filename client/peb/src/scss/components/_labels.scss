@@ -1,0 +1,27 @@
+/****** LABELS ******/
+
+/* Label Types */
+.label {
+	/* label-bg */
+	&.label-bg {
+		border-top: 2px solid $border-light;
+		span {
+			padding: 4px 25px;
+			background-color: setColor(default, label-bg)
+		}
+	}
+
+	/* label-bg-button */
+	&.label-bg-button {
+		.btn-group {
+			position: absolute;
+			top: 0;
+			right: 15px;
+			.btn-up-down {
+				position: relative;
+				top: -10px;
+				left: 7px;
+			}
+		}
+	}
+}

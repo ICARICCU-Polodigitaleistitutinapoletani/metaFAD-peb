@@ -1,0 +1,13 @@
+/***** LAYOUT BASE ******/
+.main-card {
+   .card-shadow {
+      box-shadow: 0 0 40px rgba(0,0,0,0.3);
+   }
+}
+.main-card-full {
+	height: 100vh;
+	position: absolute;
+	right: 0;
+	left: 0;
+	padding: 0 10px;
+}

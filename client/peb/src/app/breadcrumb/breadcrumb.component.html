@@ -1,0 +1,18 @@
+<ul class="breadcrumb breadcrumb-big" *ngIf="appId!=='metafad'">
+  <li class="breadcrumb-item">
+    <a (click)=titleClick()>{{title}}</a>
+  </li>
+  <li class="breadcrumb-item active" aria-current="page" *ngIf="ontology">Modifica: 
+    <input class="title-edit" [(ngModel)]="ontology.name[lang]" placeholder="Titolo" appAutogrow style="font-style:italic;border: none;" (focus)="focus(ontology.name[lang], 'name')" (blur)="blur(ontology.name[lang], 'name')">
+  </li>
+  <li class="breadcrumb-item active" aria-current="page" *ngIf="ontology && ontology.showEditingUri">URI: 
+    <input class="title-edit" [(ngModel)]="ontology.uri" placeholder="URI" appAutogrow style="font-style:italic;border: none;" (focus)="focus(ontology.uri, 'uri')" (blur)="blur(ontology.uri, 'uri')">
+  </li>
+</ul>
+
+<ul class="breadcrumb breadcrumb-big {{appId}}" *ngIf="appId==='metafad'">
+  <li class="breadcrumb-item" [class.active]="i>0" *ngFor="let item of items; let i = index;">
+    <a (click)="goTo(item.route)" *ngIf="item.route">{{item.label}}</a>
+    <span *ngIf="!item.route">{{item.label}}</span>
+  </li>
+</ul>

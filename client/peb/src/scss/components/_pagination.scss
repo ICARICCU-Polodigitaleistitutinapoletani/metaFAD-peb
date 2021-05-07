@@ -1,0 +1,55 @@
+/****** PAGINATION ******/
+.pagination {
+	.page-item {
+		.page-link {
+			color: setColor(default, pagination-link);
+			&:focus {
+				@include boxShadow(0, 0, 0, .1rem, setColor(default, pagination-link-focus));
+			}
+		}
+		&.active {
+			.page-link {
+				border-color: setColor(default, pagination-link-active-border);
+				background-color: setColor(default, pagination-link-active);
+				color: setColor(default, pagination-link-active-number);
+				cursor: default;
+				&:focus {
+					@include noBoxShadow();
+				}
+			}
+		}
+	}
+
+	/* pagination condensed */
+	&.pagination-condensed {
+		.page-item {
+			display: none;
+			.page-link {
+				@include borderRadius(0);
+				border:0;
+				color: $text;
+				background-color: $transparent;
+				&:hover,
+				&:focus {
+					background-color: $transparent;
+					@include noBoxShadow();
+				}
+			}
+			&:first-child,
+			&:last-child {
+				display: block;
+			}
+		}
+		.page-count {
+			position: relative;
+			top: 5px;
+			.total-pages {
+				&:before {
+					content: '/';
+					display: inline-flex;
+					padding: 0 5px;
+				}
+			}
+		}
+	}
+}

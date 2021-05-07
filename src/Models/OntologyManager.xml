@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:pnx="http://www.pinax.org/dtd/1.0/"
+    xmlns:model="pinax.models.*/"
+    model:tableName="ontologymanager_tbl" model:usePrefix="true">
+
+    <model:Query name="deletePropertiesFromID" type="function" arguments="ids">
+    <![CDATA[
+        $ids = '\''.implode('\' OR ontology_uri=\'', $ids).'\'';
+
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_uri='.$ids);
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteItemChildren" type="function" arguments="id">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_parentUri=\''.$id.'\'');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteEntity" type="function" arguments="id">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_uri="'.$id.'" or ontology_parentUri="'.$id.'"');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteTerminology" type="function" arguments="id">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_uri="'.$id.'" or ontology_parentUri="'.$id.'"');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteRelation" type="function" arguments="id">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_uri="'.$id.'"');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteOntology" type="function" arguments="id">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_uri="'.$id.'" or ontology_group="'.$id.'"');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+    <model:Query name="deleteOntologyContents" type="function" arguments="id">
+    <![CDATA[
+        $iterator->setSqlQuery('DELETE FROM ontologymanager_tbl WHERE ontology_group="'.$id.'" AND ontology_type = "terminology"');
+        $iterator->exec();
+    ]]>
+    </model:Query>
+
+
+    <model:Query name="ontologies" type="function" arguments="userId">
+    <![CDATA[
+        $iterator
+            ->select('*',
+                        '(SELECT count(*) FROM ontologymanager_tbl as t2 WHERE ontology_type="entity" AND t2.ontology_group = t1.ontology_uri) as entities',
+                        '(SELECT count(*) FROM ontologymanager_tbl as t2 WHERE ontology_type="terminology" AND t2.ontology_group = t1.ontology_uri) as terminology',
+                        '(SELECT count(*) FROM ontologymanager_tbl as t2 WHERE ontology_type="contents" AND t2.ontology_group = t1.ontology_uri) as contents')
+            ->where('ontology_FK_user_id', $userId, '=')
+            ->where('ontology_type', 'ontology', '=');
+    ]]>
+    </model:Query>
+
+    <model:Query name="ontologyTypeDefinition" type="function" arguments="ontologiesId,type">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', $type, '=')
+            ->orderBy('ontology_parentUri');            
+
+        $or = $iterator->expr()->orX();
+        foreach($ontologiesId as $id) {
+            $iterator->where('ontology_parentUri', $id, '=', $or);
+        }
+        $iterator->qb()->andWhere($or);
+    ]]>
+    </model:Query>
+
+    <model:Query name="ontologyById" type="function" arguments="ontologyId,userId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'ontology', '=')
+            ->where('ontology_FK_user_id', $userId, '=')
+            ->where('ontology_uri', $ontologyId, '=');   
+    ]]>
+    </model:Query>
+
+    <model:Query name="ontologyByIdOnly" type="function" arguments="ontologyId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'ontology', '=')
+            ->where('ontology_uri', $ontologyId, '=');   
+    ]]>
+    </model:Query>
+
+    <model:Query name="ontologyByUri" type="function" arguments="ontologyUri">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'ontology', '=')
+            ->where('ontology_real_uri', $ontologyUri, '=');   
+    ]]>
+    </model:Query>
+
+   <model:Query name="entityById" type="function" arguments="ontologyId,entityId,userId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'entity', '=')
+            ->where('ontology_FK_user_id', $userId, '=')
+            ->where('ontology_uri', $entityId, '=') 
+            ->where('ontology_group', $ontologyId, '=');   
+    ]]>
+    </model:Query>
+
+    <model:Query name="entityByOnlyId" type="function" arguments="entityId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'entity', '=')
+            ->where('ontology_uri', $entityId, '='); 
+    ]]>
+    </model:Query>
+
+    <model:Query name="entityByUri" type="function" arguments="entityUri">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'entity', '=')
+            ->where('ontology_real_uri', $entityUri, '='); 
+    ]]>
+    </model:Query>
+
+    <model:Query name="instanceByUri" type="function" arguments="instanceUri">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_real_uri', $instanceUri, '='); 
+    ]]>
+    </model:Query>
+
+    <model:Query name="propertyByUri" type="function" arguments="propertyUri">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'property', '=')
+            ->where('ontology_real_uri', $propertyUri, '='); 
+    ]]>
+    </model:Query>
+
+    <model:Query name="terminologyById" type="function" arguments="ontologyId,terminologyId,userId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_FK_user_id', $userId, '=')
+            ->where('ontology_uri', $terminologyId, '=') 
+            ->where('ontology_group', $ontologyId, '=');   
+    ]]>
+    </model:Query>
+
+    <model:Query name="terminologyByIdLike" type="function" arguments="terminologyId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_uri', '%'.$terminologyId, 'ILIKE');
+    ]]>
+    </model:Query>
+
+    <model:Query name="terminologyByIdOnly" type="function" arguments="terminologyId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_uri', $terminologyId);
+    ]]>
+    </model:Query>
+
+    <model:Query name="terminologyByOntologyId" type="function" arguments="ontologyId,search,page,limit">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_parentUri', $ontologyId)
+            ->where('ontology_name', '%'.$search.'%', 'ILIKE');
+        if($limit != 0)
+        {
+            $iterator->limit(($page-1)*$limit,$limit);
+        }
+    ]]>
+    </model:Query>
+
+    <model:Query name="terminologyBySuperclass" type="function" arguments="ontologyId,superclass,search,page,limit">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_group', $ontologyId)
+            ->where('ontology_superclass', $superclass)
+            ->where('ontology_name', '%'.$search.'%', 'ILIKE');
+        if($limit != 0)
+        {
+            $iterator->limit(($page-1)*$limit,$limit);
+        }
+    ]]>
+    </model:Query>
+
+    <model:Query name="allTerminologyByOntologyId" type="function" arguments="ontologyId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_type', 'terminology', '=')
+            ->where('ontology_parentUri', $ontologyId);
+    ]]>
+    </model:Query>
+
+    <model:Query name="entitiesForOntology" type="function" arguments="ontologyId,imported">
+    <![CDATA[
+        $iterator
+            ->select('*');
+
+        $or = $iterator->expr()->orX();
+        $iterator->where('ontology_type', 'entity', '=', $or);   
+        $iterator->where('ontology_type', 'terminology', '=', $or);   
+        $iterator->where('ontology_type', 'content', '=', $or);   
+        $iterator->qb()->andWhere($or);
+
+        $or = $iterator->expr()->orX();
+        $iterator->where('ontology_group', $ontologyId, '=', $or);   
+        foreach($imported as $id) {
+            $iterator->where('ontology_uri', $id, '=', $or);
+        }
+        $iterator->qb()->andWhere($or);
+    ]]>
+    </model:Query> 
+
+    <model:Query name="onlyEntitiesForOntology" type="function" arguments="ontologyId,search,page,limit,fromTop">
+    <![CDATA[
+        $iterator->where('ontology_group', $ontologyId, '=', $or)
+                    ->where('ontology_type','entity')
+                    ->where('ontology_name', '%'.$search.'%', 'ILIKE')
+                    ->orderBy('ontology_name','asc');
+        if(!$fromTop)
+        {
+            $iterator->where('ontology_from_top', 0);
+        }
+        if($limit != 0)
+        {
+            $iterator->limit(($page-1)*$limit,$limit);
+        }   
+    ]]>
+    </model:Query> 
+
+    <model:Query name="onlyInstancesForOntology" type="function" arguments="ontologyId,search,page,limit">
+    <![CDATA[
+        $iterator->where('ontology_group', $ontologyId, '=', $or)
+                    ->where('ontology_type','terminology')
+                    ->where('ontology_name', '%'.$search.'%', 'ILIKE');   
+        if($limit != 0)
+        {
+            $iterator->limit(($page-1)*$limit,$limit);
+        }
+    ]]>
+    </model:Query> 
+
+    <model:Query name="propertiesForEntity" type="function" arguments="ontologyId,entitiesId">
+    <![CDATA[
+        $iterator
+            ->select('*')
+            ->where('ontology_group', $ontologyId, '=')  
+            ->where('ontology_type', 'property', '=');   
+
+        $or = $iterator->expr()->orX();
+        foreach($entitiesId as $id) {
+            $iterator->where('ontology_parentUri', $id, '=', $or);
+        }
+        $iterator->qb()->andWhere($or);
+    ]]>
+    </model:Query>
+
+    <model:Query name="terminologyForOntology" type="function" arguments="ontologyId">
+    <![CDATA[
+        $iterator->select('*');
+
+        $iterator->where('ontology_type', 'terminology', '=')
+                ->where('ontology_group', $ontologyId, '=');   
+    ]]>
+    </model:Query>
+
+    <model:Query name="propertiesForOntology" type="function" arguments="ontologyId">
+    <![CDATA[
+        $iterator->select('*');
+
+        $iterator->where('ontology_type', 'property', '=')
+                ->where('ontology_group', $ontologyId, '=');   
+    ]]>
+    </model:Query>
+
+    <model:Query name="recordByUri" type="function" arguments="uri">
+    <![CDATA[
+        $iterator->select('*');
+
+        $iterator->where('ontology_uri', $uri, '=');   
+    ]]>
+    </model:Query>  
+
+</model:Model>

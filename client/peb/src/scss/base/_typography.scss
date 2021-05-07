@@ -1,0 +1,50 @@
+/****** TYPOGRAPHY *****/
+html,
+body {
+   font-family: $font-base;
+   font-size: 15px; //Default px size
+}
+
+/****** TITLES ******/
+
+/* Title link */
+.title-link {
+	.links {
+		position: relative;
+		left: 20px;
+	}
+}
+
+.main-title {
+	color: setColor(default, card-only-text-main-title);
+	 * {
+		color: setColor(default, card-only-text-main-title);
+	}
+}
+
+/* Title color */
+.title-color {
+	color: setColor(default, title);
+}
+
+/****** TEXT ******/
+.text-primary,
+.text-primary .icon {
+	color: setColor(default, text-primary)!important;
+}
+
+.text-secondary,
+.text-secondary .icon {
+	color: setColor(default, text-secondary)!important;
+}
+
+.text-info {
+	color: setColor(default, text-info)!important;
+}
+
+/****** LINK ******/
+a.text-primary {
+	&:hover {
+		color: setColor(default, text-primary)!important;
+	}
+}

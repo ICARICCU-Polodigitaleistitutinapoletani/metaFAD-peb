@@ -1,0 +1,60 @@
+.list-component {
+
+    .card {
+        min-height: auto;
+    
+        .card-body {
+    
+            .peso {
+                position: absolute;
+                top: 9px;
+                left: 10px;
+            }
+    
+            #peso {
+                padding-left: 50px;
+                padding-right: 18px;
+                text-align: right;
+            }
+        }
+    }
+
+    .search-card-list {
+        ::ng-deep .card {
+            min-height: 151px;
+            .card-body {
+                .card-text {
+                    color: #808080;
+                    margin-top: 5px;
+                }
+            }
+        }
+    }
+
+    .card-search {
+        border-bottom: none;
+        min-height: auto;
+        .card-body {
+            padding: 10px;
+        }
+    }
+
+    .card-list {
+        border-bottom: none;
+        .card-body {
+            padding: 0;
+            border-bottom: 0;
+
+            ::ng-deep .card-edit {
+                margin-bottom: 0 !important;
+                border: none;
+                border-bottom: 1px solid #ccc;
+
+                .card-body {
+                    padding-bottom: 1rem !important;
+                }
+            }
+        }
+    }
+
+}

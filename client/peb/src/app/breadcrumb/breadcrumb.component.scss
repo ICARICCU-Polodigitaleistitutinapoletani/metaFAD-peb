@@ -1,0 +1,37 @@
+@import "var.scss";
+
+.breadcrumb {
+    .breadcrumb-item {
+        .title-edit {
+            font-style: italic;
+            border: none;
+            min-width: 80px;
+        }
+    }
+}
+
+.metafad {
+    li {
+        a, span {
+            font-size: 1.5rem;
+            font-weight: 400;
+            font-style: normal;
+        }
+        span {
+            color: black !important;
+        }
+        a {
+            color: $color3 !important;
+        }
+    }
+    li:first-child {
+        font-size: 1.25rem;
+        margin-top: 10px;
+        font-weight: normal;
+    }
+    li:last-child {
+        a {
+            // 
+        }
+    }
+}

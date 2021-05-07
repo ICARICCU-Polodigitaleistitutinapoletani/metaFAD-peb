@@ -1,0 +1,9 @@
+/**
+*	Retrieve color from $themes-color map
+*	How to use: 'color: setColor(default, box-shadow)'
+*
+* For more information see components/helpers/_themes-color.map.scss
+*/
+@function setColor($theme-name, $semantic-key) {
+	@return map-get(map-get($themes-color, $theme-name), $semantic-key);
+}

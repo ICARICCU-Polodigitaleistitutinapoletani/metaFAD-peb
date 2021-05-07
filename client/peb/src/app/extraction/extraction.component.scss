@@ -1,0 +1,265 @@
+@import "../../_variables.scss";
+
+.extraction {
+    margin-top: 30px;
+
+    .row {
+        &.content-end {
+            justify-content: flex-end;
+        }
+    }
+
+    .box-create {
+        .form-input-text {
+            &.no-margin {
+                ::ng-deep .form-control {
+                    margin-bottom: 0;
+                }
+            }
+        }
+    }
+
+    .content-container {
+        margin-bottom: 50px;
+
+        .card {
+            min-height: auto;
+        }
+    }
+
+    ::ng-deep dropzone {
+        .dz-wrapper {
+            color:  #aaa;
+
+            .dz-message {
+                height: 300px;
+                border: 1px solid #aaa;
+                background: none;
+                font-size: 50px;
+                margin: 0;
+                width: 100%;
+                max-width: 100%;
+
+                .dz-text {
+                    font-size: 16px;
+                    top: 60%;
+                }
+                &:before {
+                    content: "\f062";
+                    font-family: FontAwesome;
+                    position: absolute;
+                    left: 0;
+                    right: 0;
+                    margin: auto;
+                    top: 50px;
+                }
+            }
+        }
+    }
+
+    .checkbox-container {
+        ::ng-deep .panel-group {
+            width: 100%;
+            margin: 20px;
+            margin-left: 40px;
+            margin-right: 40px;
+
+            .terms-accordion {
+                margin-bottom: 15px;
+
+                &.card {
+                    min-height: auto;
+                }
+
+                .card {
+                    min-height: auto;
+                }
+
+                .card-header {
+                    background-color: #f0f0f0;
+                    text-align: left;
+                    padding-left: 5px;
+                    font-weight: bold;
+                    font-size: 14px;
+                    padding-top: 2px;
+                    margin-bottom: 0;
+                }
+
+                .accordion-icon {
+                    .fa {
+                        color: #009900;
+                    }
+                }
+
+                .form-check {
+                    .form-check-label {
+                        margin-left: 6px;
+                    }
+                }
+
+                .checkbox-group {
+                    .row {
+                        margin-bottom: 20px;
+                        margin-top: 5px;
+                    }
+                }
+            }
+        }
+    }
+
+    .box-select-textarea {
+        width: 100%;
+
+        .links {
+            top: 2px;
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .term-label {
+            top: 1px;
+            padding-top: 5px;
+            font-size: 12px;
+            padding-left: 8px;
+            width: calc(100% - 11px);
+            margin-left: 1px;
+            margin-right: 10px;
+            background: #fff;
+        }
+    }
+
+    .terminology-text {
+        font-size: 14px;
+        padding: 8px;
+        padding-top: 25px;
+        height: 300px;
+    }
+
+    .form-input {
+        &.invalid {
+            .term-label {
+                color: $error-color;
+                transition: color .5s;
+            }
+            .terminology-text {
+                transition: border-color .5s;
+                border-color: $error-color;
+            }
+            .form-control-entity {
+                transition: border-color .5s;
+                border-color: $error-color;
+            }
+
+            .entity-list {
+                ::ng-deep .form-input {
+                    
+                    label {
+                        color: $error-color;
+                        transition: color .5s;
+                    }
+                    input {
+                        transition: border-color .5s;
+                        border-color: $error-color;
+                    }
+                }
+            }
+        }
+    }
+
+}
+
+.loader-container {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .SemanticToolsLoader {
+        border: 16px solid #f3f3f3; 
+        border-top: 16px solid #3498db; 
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.form-input-text {
+    &.form-big {
+        ::ng-deep .dropdown-toggle {
+            &:after {
+                top: 3px;
+            }
+        }
+    }
+}
+
+::ng-deep .template-preview {
+    ._dz-preview {
+        &._dz-file-preview {
+            display: flex;
+            margin: 10px;
+
+            ._dz-details {
+                color: #333;
+                margin-right: 10px;
+                margin-left: 25px;
+                .icon {
+                    color: $theme-secondary-color;
+                }
+            }
+
+            ._dz-success-mark {
+                display: none;
+                position: absolute;
+                .icon {
+                    color: $success-color;
+                }
+            }
+
+            ._dz-error-mark {
+                display: none;
+                position: absolute;
+                .icon {
+                    color: $error-color;
+                }
+            }
+
+            ._dz-remove {
+                .icon {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+    
+    &.dz-success {
+        ._dz-preview {
+            &._dz-file-preview {
+                ._dz-success-mark {
+                    display: block;
+                }
+            }
+        }
+    }
+
+    &.dz-error {
+        ._dz-preview {
+            &._dz-file-preview {
+                ._dz-error-mark {
+                    display: block;
+                }
+            }
+        }
+    }
+}

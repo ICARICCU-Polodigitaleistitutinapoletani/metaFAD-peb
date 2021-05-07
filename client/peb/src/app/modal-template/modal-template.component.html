@@ -1,0 +1,36 @@
+<div class="modal-template-component {{appId}}">
+  <div class="modal-header">
+
+    <div class="button-container">
+      <div class="right-button">
+        <button type="button" class="modal-btn close-btn" (click)="close()" *ngIf="appId!='metafad'">
+          <span aria-hidden="true">Chiudi</span>
+        </button>
+        <button type="button" class="btn btn-default" (click)="close()" *ngIf="appId=='metafad'">
+          <span aria-hidden="true">{{leftBtnLabel || 'Chiudi'}}</span>
+        </button>
+      </div>
+      <div style="font-size: 20px;display: flex;flex: 1;align-items: center;color: gray;justify-content: center;">{{title}}</div>
+      <div class="right-button" style="justify-content: flex-end;">
+        <button type="button" class="modal-btn save-btn" (click)="save()" [disabled]="disableSave" *ngIf="appId!='metafad'">
+          <span aria-hidden="true">Salva</span>
+        </button>
+        <button type="button" style="margin-right: 10px;" class="btn btn-primary" (click)="delete()" [disabled]="!enableDelete" *ngIf="appId=='metafad' && showDelete">
+          <span aria-hidden="true">Elimina</span>
+        </button>
+        <button type="button" class="btn btn-secondary" (click)="save()" [disabled]="disableSave" *ngIf="appId=='metafad' && !hideSave">
+          <span aria-hidden="true">{{rightBtnLabel || 'Salva'}}</span>
+        </button>
+        <button type="button" class="modal-btn delete-btn" (click)="delete()" [disabled]="!enableDelete" *ngIf="appId!='metafad'">
+          <span aria-hidden="true">Elimina</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body">
+    <app-edit-item [activeItem]=activeItem [superclass]="superclass" [info]="info" [ontology]="ontology" 
+      [disableSave$]="disableSave$" [saveItem]="saveItem" [onSave]="onSave" [onAdd]="onAdd" 
+      [enableDelete$]="enableDelete$" [onRefresh]="onRefresh" [onEdit]="onEdit" 
+      [onOpenMetaSemNet]="onOpenMetaSemNet" [_properties]="properties" [_relations]="relations" (onClose)="close($event)"></app-edit-item>
+  </div>
+</div>

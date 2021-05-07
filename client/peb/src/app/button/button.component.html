@@ -1,0 +1,6 @@
+<button class="btn btn-no-bg btn-icon-text text-gray" *ngIf="type=='add'" (click)="click(type)">
+  <i class="fa fa-plus icon text-gray" aria-hidden="true"></i>
+  <span>{{label}}</span>
+</button>
+<button class="btn btn-lg btn-default" *ngIf="type=='cancel'" (click)="click(type)">{{label}}</button>
+<button class="btn btn-lg btn-base" *ngIf="type=='confirm'" (click)="click(type)">{{label}}</button>

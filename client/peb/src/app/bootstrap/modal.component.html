@@ -1,0 +1,46 @@
+<div class="peb-modal modal-body text-center" *ngIf="!config.type">
+  <div class="title">
+    <p>{{config.msg}}</p>
+  </div>
+  <div class="row row-button" *ngIf="config.buttons && config.buttons.length">
+    <ng-container *ngFor="let btn of config.buttons">
+      <button *ngIf="btn.type==='cancel'" class="btn btn-no-bg btn-lg no-upper col-6 col-sm-4" (click)="btn.onClick.emit(btn.id)">Annulla</button>
+      <button *ngIf="btn.type==='confirm'" class="btn btn-lg btn-primary col-6 col-sm-4" (click)="btn.onClick.emit(btn.id)">Conferma</button>
+      <button *ngIf="!btn.type" class="btn {{btn.class}}" (click)="btn.onClick.emit(btn.id)">{{btn.label}}</button>
+    </ng-container>
+  </div>
+</div>
+
+<ng-container *ngIf="config.type==='v2'">
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{config.title}}</h4>
+    <button *ngIf="config.close" type="button" class="close pull-right" aria-label="Close" (click)="config.close()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body" *ngIf="config.text">
+    <span [innerHtml]="config.text"></span>
+  </div>
+  
+  <form *ngIf="config.form" #dataForm="ngForm">
+    <div class="form-group" *ngFor="let item of config.form">
+      <label [for]="item.key" [class.not-required]="item.key==='description'">{{item.label}}</label>
+      <input type="text" autocomplete="off" class="form-control" [id]="item.key" required *ngIf="item.key!=='description'" [(ngModel)]="item.val" [name]="item.key">
+      <textarea class="form-control" [id]="item.key" *ngIf="item.key==='description'" [(ngModel)]="item.val" [name]="item.key"></textarea>
+    </div>
+  </form>
+
+  <div *ngIf="config.import">
+    <dropzone [config]="config.import.dzConfig" [message]="'Trascina il file da caricare'" (error)="config.import.onUploadError($event)" (success)="config.import.onUploadSuccess($event)"
+            (canceled)="config.import.onUploadCanceled($event)"></dropzone>
+  </div>
+
+  <div class="modal-footer">
+    <ng-container *ngFor="let btn of config.buttons">
+      <button *ngIf="btn.type==='cancel'" type="button" class="btn btn-default" (click)="btn.onClick.emit({id: btn.id})">Annulla</button>
+      <button *ngIf="btn.type==='confirm'" type="button" class="btn btn-primary" (click)="btn.onClick.emit({id: btn.id})">Conferma</button>
+      <button *ngIf="!btn.type" type="button" class="btn {{btn.class}}" (click)="btn.onClick.emit({id: btn.id})">{{btn.label}}</button>
+      <button *ngIf="btn.type==='submit' && dataForm" type="submit" class="btn {{btn.class}}" [disabled]="!dataForm.valid" (click)="btn.onClick.emit({id: btn.id, data: dataForm})">{{btn.label}}</button>
+    </ng-container>
+  </div>
+</ng-container>

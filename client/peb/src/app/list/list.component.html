@@ -1,0 +1,19 @@
+<div class="list-component">
+  <div class="card card-border card-search bg">
+    <div class="card-body">
+      <app-search [search]="search" (onChange)="onSearch.emit($event)"></app-search>
+    </div>
+  </div>
+
+  <div class="card card-border mb-3 card-list">
+    <div class="card-body search-card-list">
+      <ng-container *ngFor="let item of items">
+        <app-card *ngIf="!item.hidden" [item]="item" [activeItem]="activeItem || {}" [superclass]="superclass"
+          [type]="'edit'" [info]="info" [viewType]="type" (onEdit)="edit($event, item)" (onDeleteItem)="onDeleteItem.emit($event)" 
+          (onAddItem)="onAddItem.emit($event)" (onDeleteContents)="onDeleteContents.emit($event)" [ontology]="ontology"
+          (onCreateReverse)="onCreateReverse.emit($event)">
+        </app-card>
+      </ng-container>
+    </div>
+  </div>
+</div>

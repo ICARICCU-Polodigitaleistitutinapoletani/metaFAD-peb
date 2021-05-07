@@ -1,0 +1,33 @@
+@import "../../_variables.scss";
+
+.share {
+    .share-icon {
+        text-align: center;
+        margin: 30px;
+
+        .icon {
+            font-size: 42px;
+            color: $primary-color;
+        }
+    }
+
+    .row {
+        &.row-button {
+            margin-top: 60px;
+        }
+        &.content-end {
+            justify-content: flex-end;
+        }
+    }
+
+    .no-upper {
+        text-transform: capitalize;
+    }
+
+    button {
+        &:focus {
+            outline: none;
+            box-shadow: none;
+        }
+    }
+}

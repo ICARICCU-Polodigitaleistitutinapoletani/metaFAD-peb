@@ -1,0 +1,28 @@
+<form class="search-component form-group form-input-text form-input-btn form-input-btn-icon row no-gutters">
+  <div class="col-12 form form-input">
+    <input class="form-control text-search" [(ngModel)]="search.term" name="term" (ngModelChange)="onFieldChange($event)" placeholder="Parola da ricercare">
+    <button class="btn btn-no-bg btn-dx"><i class="fa fa-search icon" aria-hidden="true"></i></button>
+  </div>
+  <!-- <div class="col-12 col-sm-5 form form-input dropdown-search">
+    <label *ngIf="!search.entityLabel">Tipologia</label>
+    <label *ngIf="search.entityLabel">Entità</label>
+    <input class="form-control" name="type" [(ngModel)]="info.labels[search.type] || search.entityLabel || info.labels.all" readonly="readonly">
+    <div dropdown class="dropdown">
+      <button dropdownToggle class="btn dropdown-toggle" type="button"></button>
+      <div *dropdownMenu class="dropdown-menu">
+        <div *ngFor="let type of types">
+          <a class="dropdown-item"  (click)="setType(type)" [ngClass]="{'menu-item': type==='entity' && entities && entities.length}">
+              <i class="fa fa-caret-down icon" aria-hidden="true" *ngIf="type==='entity' && entities && entities.length"></i>{{info.labels[type]}}
+          </a>
+          <ng-container *ngIf="type==='entity' && entities && entities.length">
+            <a *ngFor="let entity of entities" class="dropdown-item subitem" (click)="setEntity(entity)">
+              {{entity.type}}
+            </a>
+          </ng-container>
+        </div>
+        <div class="divider dropdown-divider"></div>
+        <a class="dropdown-item" (click)="setType('')">Tutto</a>
+      </div>
+    </div>
+  </div> -->
+</form>

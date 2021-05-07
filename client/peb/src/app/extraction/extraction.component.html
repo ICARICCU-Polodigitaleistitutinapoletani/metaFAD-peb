@@ -1,0 +1,169 @@
+<div class="row extraction">
+  <div class="col-12" [ngClass]="{'box-create-checkbox': state.current.id==='upload' || state.current.id==='contents'}">
+    <div class="row">
+      <!-- Box-create -->
+      <div class="box-create col-12 col-xl-5">
+
+        <h3 class="main-title">Estrazione terminologica</h3>
+
+        <div *ngIf="state.current.id==='mode'" class="content-container">
+          <h5>Modalità di caricamento dei testi</h5>
+          <!-- card-only-text -->
+          <div class="card card-border card-only-text mb-3" [ngClass]="{'active': state.current.type==='load'}" (click)="setMode('load')">
+            <div class="card-body">
+              <h5 class="card-title">Caricamento file</h5>
+              <p></p>
+            </div>
+          </div>
+          <!-- card-only-text -->
+          <div class="card card-border card-only-text mb-3" [ngClass]="{'active': state.current.type==='exist'}" (click)="setMode('exist')">
+            <div class="card-body">
+              <h5 class="card-title">Contenuti esistenti</h5>
+              <p></p>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="state.current.id==='load'" class="content-container">
+          <dropzone [config]="dzConfig" [message]="'Trascinare i file da caricare'" (error)="onUploadError($event)" (success)="onUploadSuccess($event)"
+            (canceled)="onUploadCanceled($event)"></dropzone>
+
+          <div class="form-input-dropdown form-input-text form-big clearfix no-margin">
+            <div class="form form-input">
+
+              <app-dropdown [item]="state.current" [title]="'Configurazione'" [model]="state.current.config.type || '-'" [opts]="confOpts"
+                (onSelectOpt)="setConfig($event)">
+              </app-dropdown>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="state.current.id==='exist'" class="content-container">
+          <div class="card card-border card-only-text mb-3" [class.active]="selectedContent===id" *ngFor="let id of objectKeys(info.features.links?.termExtraction?.contents)" (click)="selectContent(id)">
+            <div class="card-body">
+              <h5 class="card-title">{{info.features.links?.termExtraction?.contents[id]}}</h5>
+              <p></p>
+            </div>
+          </div>
+
+          <div class="form-input-dropdown form-input-text form-big clearfix no-margin">
+            <div class="form form-input">
+              <app-dropdown [item]="state.current" [title]="'Configurazione'" [model]="state.current.config.type || '-'" [opts]="confOpts"
+                (onSelectOpt)="setConfig2($event)">
+              </app-dropdown>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="row checkbox-container" *ngIf="state.current.id==='upload' || state.current.id==='contents'">
+      <accordion [closeOthers]="oneAtATime">
+        <accordion-group [panelClass]="'terms-accordion'" *ngFor="let k of objectKeys(state.current.terms)" (isOpenChange)="setOpened(k, $event)" [isOpen]="accordion[k]">
+          <span accordion-heading class="accordion-icon">
+            <i class="fa" [ngClass]="{'fa-minus-square-o': accordion[k], 'fa-plus-square-o': !accordion[k]}"></i> {{k}}
+          </span>
+          
+          <div class="checkbox-group col-lg-12">
+            <div class="row">
+              <div class="col-12 col-sm-6 col-md-4 col-lg-3 card card-only-checkbox" *ngFor="let col of state.current.terms[k]">
+                <div class="card-body">
+                  <form>
+                    <div class="form form-check" *ngFor="let t of col">
+                      <input class="form-check-input" type="checkbox" [checked]="t.checked" (change)="checkTerm(t)">
+                      <label class="form-check-label" for="defaultCheck1">{{t.label}}</label>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </accordion-group>
+      </accordion>
+
+      <div class="box-select-textarea">
+        <div class="row">
+          <form class="col-12 col-xl-5">
+            <div class="form-group">
+              <!-- checkbox base (label-dx) -->
+              <div class="form form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="entityExist" [checked]="entity.exist" 
+                  (change)="toggleEntityExist()">
+                <label class="form-check-label" for="entityExist">Entità esistente</label>
+              </div>
+              <div class="form form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="entityNew" [checked]="entity.new" 
+                  (change)="toggleEntityNew()">
+                <label class="form-check-label" for="entityNew">Crea nuova entità</label>
+              </div>
+              <!-- form-input-dropdown-big (select big)-->
+              <div class="form-input-dropdown form-input-text form-big clearfix">
+                <div class="form form-input" [ngClass]="{'invalid': checkInvalidEntity()}">
+                  <app-dropdown class="entity-list" *ngIf="entity.exist" [item]="entity" [title]="'Istanza entità'" [model]="entity.entity.value" [opts]="superclassDDOpts"
+                    (onSelectOpt)="setEntity($event)">
+                  </app-dropdown>
+                  <input class="form-control form-control-entity" placeholder="" name="entityName" *ngIf="!entity.exist" [disabled]="!entity.new" [(ngModel)]="entity.entity.value" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <!-- checkbox base (label-dx) -->
+              <!-- <div class="form form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="lexicon" [checked]="entity.lexicon" (change)="entity.lexicon=!entity.lexicon">
+                <label class="form-check-label" for="lexicon">Crea lessico</label>
+              </div> -->
+              <!-- <div class="form form-check form-check-inline">
+                <input class="form-check-input" type="checkbox" id="content" [checked]="entity.content" (change)="entity.content=!entity.content" [disabled]="!entity.exist && !entity.new">
+                <label class="form-check-label" for="content">Crea schede di contenuto</label>
+              </div> -->
+              <!-- form-input-text-area -->
+              <div class="form-input-text form-input-text-area form-big">
+                <div class="form form-input" [ngClass]="{'invalid': checkTerms && !entity.terms.trim().length}">
+                  <label class="term-label">Concetti</label>
+                  <textarea class="form-control terminology-text" placeholder="" 
+                  [(ngModel)]="entity.terms" 
+                  name="terms"
+                  (blur)="checkTerms=true"></textarea>
+                </div>
+                <div class="links">
+                  <a href="">Vedi grafo conoscenza</a>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="btn-group d-block mx-auto col-12 col-xl-5">
+        <div class="row no-gutters content-end">
+          <button class="col-12 col-sm-4 btn btn-no-bg btn-lg btn-icon-text text-left" *ngIf="state.prev.length" (click)="goBack()">
+            <i class="fa fa-angle-double-left icon" aria-hidden="true"></i>
+            Indietro
+          </button>
+          <button class="col-6 col-sm-4 btn btn-no-bg btn-lg text-initial" (click)="cancel()" *ngIf="state.current.id!=='upload' && state.current.id!=='contents'">
+            <span>Annulla</span>
+          </button>
+          <button class="col-6 col-sm-4 btn btn-no-bg btn-lg text-initial" (click)="finish()" *ngIf="state.current.id==='upload' || state.current.id==='contents'">
+            <span>Concludi</span>
+          </button>
+          <button class="col-6 col-sm-4 btn btn-lg btn-primary" [disabled]="!state.current.check" (click)="goNext()" *ngIf="state.current.id!=='upload' && state.current.id!=='contents'">
+              <!-- <button class="col-6 col-sm-4 btn btn-lg btn-primary" (click)="goNext()" *ngIf="state.current.id!=='upload'"> -->
+         
+            <span>Prosegui</span>
+          </button>
+          <button class="col-6 col-sm-4 btn btn-lg btn-primary" 
+            [disabled]="!entity.terms.trim().length || checkInvalidEntity()" 
+            (click)="create()" 
+            *ngIf="state.current.id==='upload' || state.current.id==='contents'">
+            <span>Crea</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,10 @@
+<tal:block>
+    <script>
+        window.UPLOAD_URL = 'uploader.php';
+        window.REST_URL = '<tal:block tal:content="Component/restUrl" />';
+        window.BASE_ROUTING = '<tal:block tal:content="Component/baseRouting" />';
+        window.GRAPH_PATH = '../vendor/icariccu/peb/client/peb/dist/';
+        window.PEB_API = '<tal:block tal:content="Component/pebApiUrl" />';
+    </script>
+    <app-root class="client-peb"></app-root>
+</tal:block>

@@ -1,0 +1,75 @@
+/****** LINKS ******/
+a {
+	color: setColor(default, link);
+	&:hover {
+		color: setColor(default, link);
+		text-decoration: none;
+	}
+	&.active {
+		text-decoration: underline;
+		&:hover {
+			text-decoration: none;
+		}
+	}
+	.icon {
+		color: setColor(default, link-icon);
+		&:hover {
+			color: setColor(default, link-icon);
+		}
+	}
+	&.no-complete {
+		color: setColor(default, link-no-complete);
+		&:hover {
+			color: setColor(default, link-no-complete);
+		}
+	}
+	&.complete {
+		color: setColor(default, link-complete);
+		&:hover {
+			color: setColor(default, link-complete);
+		}
+	}
+}
+
+.icon {
+	color: setColor(default, icon);
+}
+
+.link-group {
+	&.divider-dash {
+		a:not(:first-child):before {
+			content: ' - ';
+		}
+	}
+	&.divider-vbar {
+		a:not(:first-child):before {
+			content: ' | ';
+			color: setColor(default, divider-vbar);
+		}
+	}
+	&.d-block {
+		a {
+			display: block;
+			padding-bottom: 5px;
+		}
+	}
+	&.small {
+		font-size: 87%;
+	}
+}
+
+.fa {
+	font-size: 1.125rem;
+	position: relative;
+	top: 1px;
+}
+.dark {
+	color: setColor(default, link-dark);
+	font-weight: 400;
+}
+.btn-links {
+	text-align: left;
+	a:before {
+		content: '';
+	}
+}

@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<rdf:RDF 
+        tal:attributes="xmlns php: (substr(Component.uri,-1) == '#') ? Component.uri : Component.uri . '#'"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:owl="http://www.w3.org/2002/07/owl#"
+        xmlns:xml="http://www.w3.org/XML/1998/namespace"
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+        xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+        attributeExtra="##"
+    >    
+    <owl:Ontology tal:attributes="rdf:about Component/uri">
+        <owl:imports tal:condition="Component/derivedFrom" tal:repeat="item Component/derivedFromURICleans" tal:attributes="rdf:resource item" />
+    </owl:Ontology>
+
+    <tal:block tal:condition="php: !empty(Component.annotationProperties)">
+        <!-- 
+        ///////////////////////////////////////////////////////////////////////////////////////
+        //
+        // Annotation Properties
+        //
+        ///////////////////////////////////////////////////////////////////////////////////////
+        -->
+    </tal:block>
+
+    <owl:AnnotationProperty tal:repeat="ap Component/annotationProperties" tal:attributes="rdf:about ap/realId" />
+
+    <tal:block tal:condition="php: !empty(Component.relations)">
+        <!-- 
+        ///////////////////////////////////////////////////////////////////////////////////////
+        //
+        // Object Properties
+        //
+        ///////////////////////////////////////////////////////////////////////////////////////
+        -->
+    </tal:block>
+
+    <owl:ObjectProperty tal:repeat="relation Component/relations" tal:attributes="rdf:about relation/value/value/id">
+        <owl:inverseOf tal:condition="php: relation.inverseOf" tal:attributes="rdf:resource relation/inverseOf" />
+        <rdfs:domain tal:repeat="domain relation/domain" tal:attributes="rdf:resource domain"/>
+        <rdfs:range tal:condition="php: !relation.multivalue AND relation.range">
+            <owl:Restriction>
+                <owl:onProperty tal:attributes="rdf:resource relation/value/value/id"/>
+                <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
+                <owl:onClass tal:attributes="rdf:resource relation/range" />
+            </owl:Restriction>
+        </rdfs:range>
+        <rdfs:range tal:condition="php: relation.multivalue AND relation.range" tal:attributes="rdf:resource relation/range" />
+        <rdfs:label tal:condition="php: relation.name.it" xml:lang="it" tal:content="relation/name/it"></rdfs:label>
+        <rdfs:label tal:condition="php: relation.name.en" xml:lang="en" tal:content="relation/name/en"></rdfs:label>
+    </owl:ObjectProperty>
+
+    <tal:block tal:condition="php: !empty(Component.properties)">
+        <!-- 
+        ///////////////////////////////////////////////////////////////////////////////////////
+        //
+        // Datatype Properties
+        //
+        ///////////////////////////////////////////////////////////////////////////////////////
+        -->
+    </tal:block>
+
+    <owl:DatatypeProperty tal:repeat="property Component/properties" tal:attributes="rdf:about property/realId">
+        <rdfs:domain tal:repeat="domain property/domain" tal:attributes="rdf:resource domain"/>
+        <rdfs:range tal:condition="php: property.value.id" tal:attributes="rdf:resource property/value/id"/>
+        <rdfs:label tal:condition="php: property.name.it" xml:lang="it" tal:content="property/name/it"></rdfs:label>
+        <rdfs:label tal:condition="php: property.name.en" xml:lang="en" tal:content="property/name/en"></rdfs:label>
+    </owl:DatatypeProperty>
+
+    <tal:block tal:condition="php: !empty(Component.entities)">
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+     </tal:block>
+
+     <owl:Class tal:repeat="entity Component/entities" tal:attributes="rdf:about entity/id">
+        <rdfs:label tal:condition="php: entity.name.it" xml:lang="it" tal:content="entity/name/it"></rdfs:label>
+        <rdfs:label tal:condition="php: entity.name.en" xml:lang="en" tal:content="entity/name/en"></rdfs:label>
+        <rdfs:subClassOf tal:condition="php: entity.superclassExport" tal:attributes="rdf:resource entity/superclassExport" />
+    </owl:Class>
+
+    <tal:block tal:condition="php: !empty(Component.terms)">
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Named individuals
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+     </tal:block>
+
+    <owl:NamedIndividual tal:repeat="term Component/terms" tal:attributes="rdf:about term/id">
+        <rdf:type tal:condition="php: term.superclass" tal:attributes="rdf:resource term/superclass/value" />
+        <tal:block tal:content="structure term/content" />
+    </owl:NamedIndividual>
+
+</rdf:RDF>

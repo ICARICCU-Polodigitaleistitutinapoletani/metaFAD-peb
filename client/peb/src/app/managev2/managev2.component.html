@@ -1,0 +1,13 @@
+
+<div class="row">
+  <h3 class="main-title">Domini tematici</h3>
+</div>
+<div class="row">
+  <div class="col-12 col-sm-6 col-md-5 col-lg-3" *ngFor="let ontology of ontologies; let i = index;">
+    <app-card [ontology]="ontology" [type]="'managev2-'+type" [info]="info" [index]="i" (onPublish)="onPublish($event)" (onEdit)="onEdit($event)"
+      (onDelete)="onDelete($event)" (onDownload)="onDownload($event)" (onUpload)="onUpload($event)"></app-card>
+  </div>
+  <div class="col-12 col-sm-6 col-md-5 col-lg-3" *ngIf="type==='ontology'">
+    <app-card [ontology]="emptyOntology" [type]="'managev2-'+type" (onAdd)="createOntology($event)"></app-card>
+  </div>
+</div>

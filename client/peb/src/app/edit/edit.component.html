@@ -1,0 +1,589 @@
+<div class="row row-header">
+  <nav class="col-12" aria-label="breadcrumb" role="navigation">
+    <app-breadcrumb [title]="'Gestione ontologie'" [ontology]="ontology" (onFocus)="onNameFocus($event)"
+      (onBlur)="onNameBlur($event)" (onTitleClick)="goToList()"></app-breadcrumb>
+  </nav>
+</div>
+
+<div class="card card-shadow card-base main-card-full mb-3" *ngIf="ontology.items.length || activeItem">
+  <div class="card-header">
+    <div class="row">
+      <!-- Link-group -->
+      <div class="link-group align-left col-7" style="flex-direction: column;">
+        <div class="row" style="padding-left: 15px">
+          <a class="link" (click)="addEntity()" *ngIf="info.features.addEntity">
+            <i class="fa fa-plus icon"></i>Aggiungi entità</a>
+          <a class="link" (click)="addConcept()" *ngIf="info.features.addTerminology">
+            <i class="fa fa-plus icon"></i>Aggiungi concetto</a>
+          <!-- <a class="link" (click)="addContent()" *ngIf="info.features.addContent"><i class="fa fa-plus icon"></i>Aggiungi contenuto</a> -->
+          <a *ngIf="info.features.links?.ontologyGraph?.show" class="link"
+            [href]="info.features.links?.ontologyGraph?.url">
+            <i class="fa fa-sitemap icon"></i>{{info.features.links?.ontologyGraph?.label}}
+          </a>
+          <a class="link" (click)="openProperties()">
+            <i class="fa fa-cog icon" aria-hidden="true"></i>Proprietà
+          </a>
+        </div>
+        <!-- <div class="row" style="margin-top: 15px;padding-left: 15px;">
+          <span style="margin-right: 10px;">Visualizza mappa</span>
+          <ui-switch [(ngModel)]="enableMap" size="small" color="#2167B9"></ui-switch>
+        </div> -->
+      </div>
+      <!-- Link-group -->
+      <div class="link-group align-right col-5">
+        <a *ngIf="info.features.links?.metaSemNet?.show" class="link" [href]="info.features.links?.metaSemNet?.url"
+          target="_blank">
+          <i class="fa fa-spinner icon"></i>{{info.features.links?.metaSemNet?.label}}
+        </a>
+        <a *ngIf="info.features.links?.termExtraction?.show" class="link" (click)="goToExtraction()">
+          <i class="fa fa-quote-right icon"></i>{{info.features.links?.termExtraction?.label}}
+        </a>
+        <a *ngIf="info.features.links?.knowledgeGraph?.show" class="link"
+          [href]="info.features.links?.knowledgeGraph?.url" target="_blank">
+          <i class="fa fa-dot-circle-o icon" aria-hidden="true"></i>{{info.features.links?.knowledgeGraph?.label}}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body" style="padding-bottom: 0; flex: 0;">
+    <div class="row">
+      <div class="col-12 col-lg-4 col-xl-3">
+        <div class="aside-left list-container" style="margin-bottom: 0;">
+          <div class="card card-border card-search card-tab">
+            <div class="row no-gutters content-end">
+              <button class="col-6 col-sm-6 btn" [class.btn-active]="!enableMap"
+                (click)="enableMap=false; stopAudio();">
+                <span>Visualizzazione elenco</span>
+              </button>
+              <button class="col-6 col-sm-6 btn" [class.btn-active]="enableMap" (click)="showMap($event, false)">
+                <span>Visualizzazione mapp<a class="avengers" (click)="showMap($event, true)">a</a></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body" [hidden]="enableMap" style="padding-top: 0;">
+    <div class="row">
+      <!-- aside-left -->
+      <div class="col-12 col-lg-4 col-xl-3">
+        <div class="aside-left list-container">
+
+          <div class="card card-border card-search bg">
+            <div class="card-body">
+              <app-search [search]="search" [types]="types" [info]="info" [entities]="superclassDDOpts" (onChange)="pagination.change.emit(0)"></app-search>
+            </div>
+          </div>
+
+          <div class="card card-border mb-3 card-list">
+            <div class="card-body search-card-list">
+              <!-- <ng-container *ngFor="let item of (ontology.items | searchfilter:search:'ontology':lang)"> -->
+              <ng-container *ngFor="let item of paginationItem[currentPage]">
+                <app-card *ngIf="!item.hidden" [item]="item" [activeItem]="activeItem || {}" [superclass]="superclass"
+                  [type]="'edit'" (onSelectItem)="onSelectItem($event)" (onDeleteItem)="onDeleteItem($event)">
+                </app-card>
+              </ng-container>
+            </div>
+          </div>
+          <ng-container *ngIf="calcPages((ontology.items | searchfilter:search:'ontology':lang))>1">
+            <app-pagination [pages]="pagination.pages" [current]="pagination.current" [change]="pagination.change" (onChange)="onChangePage($event)">
+            </app-pagination>
+          </ng-container>
+        </div>
+      </div>
+
+      <!-- side-right -->
+      <div class="col-12 col-lg-8 col-xl-9">
+        <div class="side-right right-content" *ngIf="activeItem && !activeItem.editProperties">
+          <form class="form-input-btn form-big" [formGroup]="titleForm">
+            <div class="form form-input form-title">
+              <input class="form-control" placeholder="" name="title" autocomplete="off" formControlName="title"
+                (input)="enableSave=true" [ngClass]="{ 'is-invalid': submitted && fTitle.title.errors }">
+              <div *ngIf="submitted && fTitle.title.errors" class="invalid-feedback invalid-title">
+                <div *ngIf="fTitle.title.errors.required">Titolo obbligatorio</div>
+              </div>
+              <button class="btn btn-small btn-dx btn-save-item" (click)="onSaveItem(activeItem)"
+                [disabled]="!enableSave && (!contentForm || !contentForm.dirty)">
+                <i class="fa fa-save icon" aria-hidden="true"></i> Salva
+              </button>
+              <button class="btn btn-small btn-no-bg btn-dx" (click)="onDeleteItem(activeItem)">
+                <i class="fa fa-trash icon" aria-hidden="true"></i>
+              </button>
+            </div>
+          </form>
+          <div class="card card-border card-content">
+            <div class="row entity-uri" *ngIf="ontology.showEditingUri && activeItem.type==='entity'">
+              <div class="title-group">
+                URI:
+              </div>
+              <div class="input-container">
+                <input class="form-control" placeholder="" name="uri" autocomplete="off" [(ngModel)]="activeItem.uri"
+                  (input)="enableSave=true">
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="card card-edit card-edit-1 mb-3">
+                <div class="row">
+                  <div class="col-1 title-group">
+                    <h2 class="card-subtitle">{{activeItem.label}}</h2>
+                  </div>
+                  <ul class="col-11 links list-inline align-right" *ngIf="activeItem.type==='terminology'">
+                    <li *ngIf="activeItem.complete" class="list-inline-item">
+                      <a class="complete">Scheda completa</a>
+                    </li>
+                    <li *ngIf="!activeItem.complete" class="list-inline-item">
+                      <a class="no-complete">Scheda non completa</a>
+                    </li>
+                    <!-- <li class="list-inline-item">
+                        <a>Vedi scheda contenuto</a>
+                      </li>
+                      <li class="list-inline-item">
+                        <a>Modifica scheda contenuto</a>
+                      </li> -->
+                  </ul>
+                  <div class="col-11 links inline-editing" *ngIf="activeItem.type==='entity'">
+                    <input class="form-check-input" type="checkbox" [checked]="activeItem.inline"
+                      (change)="activeItem.inline=!activeItem.inline;enableSave=true">
+                    <h2 class="card-subtitle">consenti editing inline</h2>
+                  </div>
+                </div>
+
+              </div>
+              <div class="form-group row no-gutters check-label" *ngIf="activeItem.type==='entity'">
+                <div class="col-3 col-sm-1">
+                  <!-- checkbox base (no-label) -->
+                  <div class="form-check-no-label">
+                    <div class="form form-check">
+                      <span>Obbligatorio</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-5 col-sm-2 col-md-1">
+                  <!-- checkbox base (no-label+button) -->
+                  <div class="form-check-no-label">
+                    <div class="form form-check">
+                      <span>Multivalore</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-input-dropdown form-input-text form-big form-margin"
+                *ngIf="activeItem.type==='terminology'">
+                <div class="form-group row no-gutters">
+                  <div class="col-12 form form-input">
+
+                    <app-dropdown [item]="activeItem" [title]="'Istanza entità'"
+                      [model]="(activeItem.superclass) ? superclass[activeItem.superclass.value].name[lang] : '-'"
+                      [opts]="superclassDDOpts" (onSelectOpt)="setSuperclass($event)" [allowBlank]="true"
+                      [selected]="activeItem.superclass">
+                    </app-dropdown>
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-input-btn form-input-btn-icon properties-container" [sortablejs]="activeItem.properties"
+                [sortablejsOptions]="sortableOpts">
+
+                <div class="form-group row no-gutters" *ngFor="let property of activeItem.properties; let last = last;"
+                  [ngClass]="{'last-row': last}">
+
+                  <div class="col-12 col-sm-4 form-input-dropdown" [ngClass]="{'col-md-3': activeItem.type==='entity'}">
+                    <div class="form form-input">
+                      <app-dropdown [item]="property" [model]="info.labels[property.type] || '-'"
+                        [opts]="liv1DDOpts[activeItem.type]" (onSelectOpt)="setPropertyType($event)"
+                        [filterIds]="(activeItem.type==='terminology' && activeItem.superclass) ? ['relation'] : null">
+                      </app-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-4 form-input-dropdown" *ngIf="property.type"
+                    [ngClass]="{'col-md-4': activeItem.type==='entity'}">
+
+                    <div class="form form-input">
+                      <app-dropdown
+                        *ngIf="property.type!=='superclass' && property.type!=='category' && (activeItem.type!=='entity' || property.type!=='relation')"
+                        [item]="property" [model]="property.value.type || '-'"
+                        [opts]="liv2DDOpts[activeItem.type][property.type]" (onSelectOpt)="setPropertyValue($event)">
+                      </app-dropdown>
+                      <!-- <app-dropdown *ngIf="property.type==='category'" [item]="property" [model]="property.label || '-'" [opts]="liv2DDOpts[activeItem.type][property.type]"
+                        (onSelectOpt)="setPropertyValue($event)">
+                      </app-dropdown> -->
+                      <div *ngIf="property.type==='category'" [ngClass]="{'empty-col': !property.type}">
+                        <label class="peso" for="peso">Peso</label>
+                        <input id="peso" class="form-control" type="number" placeholder="" *ngIf="property.type"
+                          [(ngModel)]="property.label" (ngModelChange)="enableSave=true">
+                      </div>
+                      <app-dropdown *ngIf="property.type==='superclass'" [item]="property"
+                        [model]="(property.value) ? superclass[property.value].name[lang] : '-'"
+                        [opts]="liv2DDOpts[activeItem.type][property.type]" [filter]="activeItem.id"
+                        (onSelectOpt)="setPropertyValue($event)">
+                      </app-dropdown>
+                      <!-- dropdown a due colonne -->
+                      <app-dropdown *ngIf="activeItem.type==='entity' && property.type==='relation'" [type]="'2'"
+                        [item]="property"
+                        [model]="(property.value.type) ? ( (property.entity) ? (property.value.type+':'+property.value.value.type+':'+property.entity.type) : (property.value.type+':'+property.value.value.type) ) : '-'"
+                        [opts]="liv2DDOpts[activeItem.type][property.type]" [superclass]="superclassDDOpts"
+                        (onSelectOpt)="setPropertyValue($event)">
+                      </app-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-4 form form-input " *ngIf="property.type"
+                    [ngClass]="{'col-md-3': activeItem.type==='entity', 'no-border': activeItem.type!=='entity'}">
+                    <div *ngIf="property.type!=='category'"
+                      [ngClass]="{'empty-col': property.type==='superclass' || !property.value.type, 'empty-no-border': activeItem.type!=='entity'}">
+                      <input class="form-control" placeholder=""
+                        *ngIf="property.type!=='superclass' && property.value.type" [(ngModel)]="property.name[lang]"
+                        (ngModelChange)="enableSave=true">
+                    </div>
+                    <div *ngIf="property.type==='category'"
+                      [ngClass]="{'empty-col': !property.label, 'empty-no-border': activeItem.type!=='entity'}">
+                      <input class="form-control" placeholder="" *ngIf="property.label" [(ngModel)]="property.value"
+                        (ngModelChange)="enableSave=true">
+                    </div>
+                    <div class="btn-group-block btn-dx">
+                      <button class="btn btn-small btn-no-width btn-no-bg">
+                        <i class="fa fa-eye icon" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeProperty(property)"
+                        *ngIf="activeItem.type!=='entity'">
+                        <i class="fa fa-trash icon" aria-hidden="true"></i>
+                      </button>
+                      <button class="btn btn-small btn-no-width btn-no-bg btn-move" (click)="removeProperty(property)"
+                        *ngIf="activeItem.type!=='entity'">
+                        <i class="fa fa-arrows icon" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="col-3 col-sm-1" *ngIf="activeItem.type==='entity' && property.type">
+                    <!-- checkbox base (no-label) -->
+                    <div class="form-check-no-label">
+                      <div class="form form-check">
+                        <input class="form-check-input" type="checkbox" *ngIf="property.type!=='superclass'"
+                          [checked]="property.mandatory"
+                          (change)="property.mandatory=!property.mandatory;enableSave=true">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-5 col-sm-2 col-md-1" *ngIf="activeItem.type==='entity' && property.type">
+                    <!-- checkbox base (no-label+button) -->
+                    <div class="form-check-no-label">
+                      <div class="form form-check no-border-check">
+                        <input class="form-check-input" type="checkbox" *ngIf="property.type!=='superclass'"
+                          [checked]="property.multivalue"
+                          (change)="property.multivalue=!property.multivalue;enableSave=true">
+                        <button class="btn btn-small btn-no-width btn-no-bg btn-trash"
+                          (click)="removeProperty(property)">
+                          <i class="fa fa-trash icon" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeProperty(property)">
+                          <i class="fa fa-arrows icon" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="form-content-container" *ngIf="activeItem.type==='terminology' && activeItem.superclass">
+                <a class="link" (click)="addContent()" *ngIf="!activeItem.content">
+                  <i class="fa fa-plus icon"></i>Aggiungi scheda contenuto
+                </a>
+
+                <div class="form-content" *ngIf="activeItem.content">
+                  <form [formGroup]="contentForm">
+                    <div class="content-title">
+                      <h2 class="card-subtitle underline">Scheda contenuto</h2>
+                      <a class="link" (click)="removeContent()">
+                        <i class="fa fa-times icon"></i>
+                      </a>
+                    </div>
+                    <div formArrayName="content">
+                      <div *ngFor="let content of contentForm.get('content').controls; let i = index;" class="form-item"
+                        [ngStyle]="{'margin-left': content.controls.lev.value ? (content.controls.lev.value*15)+'px' : '0px'}">
+                        <div [formGroupName]="i" *ngIf="content.controls as c">
+                          <div class="label-container"
+                            [ngClass]="{'invalid-feedback': submitted && (c.items.errors || c.items.invalid)}">
+                            <div class="form-label" [ngClass]="{'subtitle': c.resolved.value}">{{c.name.value}}<span
+                                *ngIf="c.mandatory.value">*</span></div>
+                            <div>
+                              <a class="link" (click)="addItem(i)"
+                                *ngIf="c.multivalue.value && c.type.value==='property' && !c.id.value.includes('fieldOpenList') && !c.id.value.includes('fieldInternalLink')">
+                                <i class="fa fa-plus icon"></i>
+                              </a>
+                            </div>
+                          </div>
+                          <div class="form-value" formArrayName="items">
+                            <div class="value-container"
+                              *ngFor="let _item of content.get('items').controls; let j = index;">
+                              <div [formGroupName]="j" *ngIf="_item.controls as item">
+                                <ng-container [ngSwitch]="c.type.value">
+                                  <ng-container *ngSwitchCase="'relation'">
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteRelation$[c.contentId.value] | async" bindLabel="value"
+                                      [multiple]="c.multivalue.value" [addTag]="false" [hideSelected]="true"
+                                      [loading]="autocompleteRelationLoading[c.contentId.value]"
+                                      [typeahead]="autocompleteRelationInput$[c.contentId.value]"
+                                      formControlName="value" notFoundText="Nessuna corrispondenza"
+                                      typeToSearchText="Digita per cercare"
+                                      [ngClass]="{ 'is-invalid': submitted && item.value.errors }" (focus)="ac=c"
+                                      (blur)="ac=null" *ngIf="!c.resolved.value">
+                                    </ng-select>
+                                  </ng-container>
+                                  <ng-container *ngSwitchCase="'property'">
+                                    <ng-container *ngIf="c.id.value.includes('fieldText')">
+                                      <input class="form-control" placeholder="" name="text" autocomplete="off"
+                                        formControlName="value" (input)="enableSave=true"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }">
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldLongText')">
+                                      <textarea class="form-control" placeholder="" formControlName="value"
+                                        name="longText"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }"></textarea>
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldDescriptiveText')">
+                                      <editor [init]="editorConfig" (onBlur)="onEditorBlur($event)"
+                                        (onKeyUp)="onEditorKeyUp($event)" (onChange)="onEditorChange($event)"
+                                        formControlName="value"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }"></editor>
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldNumber')">
+                                      <input class="form-control" placeholder="" type="number" autocomplete="off"
+                                        formControlName="value"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }">
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldDate')">
+                                      <input class="form-control" placeholder="" type="date" autocomplete="off"
+                                        formControlName="value"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }">
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldImage')">
+                                      DAM picker
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldMedia')">
+                                      DAM picker
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldOpenList')">
+                                      <ng-select class="custom-autocomplete"
+                                        [items]="autocompleteFieldOpenList$[c.contentId.value] | async"
+                                        bindLabel="value" [multiple]="c.multivalue.value" [addTag]="false"
+                                        [hideSelected]="true"
+                                        [loading]="autocompleteFieldOpenListLoading[c.contentId.value]"
+                                        [typeahead]="autocompleteFieldOpenListInput$[c.contentId.value]"
+                                        formControlName="value" notFoundText="Nessuna corrispondenza"
+                                        typeToSearchText="Digita per cercare"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }" (focus)="ac=c"
+                                        (blur)="ac=null">
+                                      </ng-select>
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldExternalImage')">
+                                      <input class="form-control" placeholder="" type="url" autocomplete="off"
+                                        formControlName="value"
+                                        [ngClass]="{ 'is-invalid': submitted && (item.value.errors || item.value.invalid) }">
+                                      <div *ngIf="submitted && item.value.value && item.value.invalid"
+                                        class="invalid-feedback">
+                                        URL non valido
+                                      </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldExternalLink')">
+                                      <input class="form-control" placeholder="" type="url" autocomplete="off"
+                                        formControlName="value"
+                                        [ngClass]="{ 'is-invalid': submitted && (item.value.errors || item.value.invalid) }">
+                                      <div *ngIf="submitted && item.value.value && item.value.invalid"
+                                        class="invalid-feedback">
+                                        URL non valido
+                                      </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="c.id.value.includes('fieldInternalLink')">
+                                      <ng-select class="custom-autocomplete"
+                                        [items]="autocompleteFieldInternalLink$[c.contentId.value] | async"
+                                        bindLabel="value" [multiple]="c.multivalue.value" [addTag]="false"
+                                        [hideSelected]="true"
+                                        [loading]="autocompleteFieldInternalLinkLoading[c.contentId.value]"
+                                        [typeahead]="autocompleteFieldInternalLinkInput$[c.contentId.value]"
+                                        formControlName="value" notFoundText="Nessuna corrispondenza"
+                                        typeToSearchText="Digita per cercare"
+                                        [ngClass]="{ 'is-invalid': submitted && item.value.errors }">
+                                      </ng-select>
+                                    </ng-container>
+                                  </ng-container>
+                                </ng-container>
+                                <div class="btn-group-block btn-dx"
+                                  *ngIf="c.multivalue.value && c.type.value==='property' && !c.id.value.includes('fieldOpenList') && !c.id.value.includes('fieldInternalLink') && content.get('items').controls.length>1">
+                                  <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeItem(i, j)"
+                                    *ngIf="activeItem.type!=='entity'">
+                                    <i class="fa fa-trash icon" aria-hidden="true"></i>
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="side-right right-content" *ngIf="activeItem && activeItem.editProperties">
+          <div class="form-input-btn form-big">
+            <div class="form form-input form-title">
+              <div class="form-control">
+                Proprietà
+              </div>
+              <button class="btn btn-small btn-dx btn-save-item" (click)="onSaveDataProperties(activeItem)">
+                <i class="fa fa-save icon" aria-hidden="true"></i> Salva
+              </button>
+            </div>
+          </div>
+          <div class="card card-border card-content">
+            <div class="card-body">
+              <div class="card card-edit card-edit-1 mb-3">
+                <div class="row">
+                  <div class="col-1 title-group">
+                    <h2 class="card-subtitle">Data type property</h2>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row no-gutters check-label">
+                <div class="col-3 col-sm-1">
+                  <div class="form-check-no-label">
+                    <div class="form form-check">
+                      <span>Obbligatorio</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-5 col-sm-2 col-md-1">
+                  <div class="form-check-no-label">
+                    <div class="form form-check">
+                      <span>Multivalore</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-input-btn form-input-btn-icon properties-container" [sortablejs]="activeItem.properties"
+                [sortablejsOptions]="sortableOpts">
+                <div class="form-group row no-gutters" *ngFor="let property of activeItem.properties; let last = last;"
+                  [ngClass]="{'last-row': last}">
+                  <div class="col-12 col-sm-4 form-input-dropdown col-md-3">
+                    <div class="form form-input">
+                      <app-dropdown [item]="property" [model]="info.labels[property.type] || '-'"
+                        [opts]="liv1DDOpts['entity']" (onSelectOpt)="setPropertyType($event)"
+                        [filterIds]="['relation', 'superclass']">
+                      </app-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-4 form-input-dropdown col-md-4" *ngIf="property.type">
+                    <div class="form form-input">
+                      <app-dropdown [item]="property" [model]="property.value.type || '-'"
+                        [opts]="liv2DDOpts['entity'][property.type]" (onSelectOpt)="setPropertyValue($event)">
+                      </app-dropdown>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-4 form form-input col-md-3" *ngIf="property.type">
+                    <div [ngClass]="{'empty-col': !property.value.type}">
+                      <input class="form-control" placeholder="" *ngIf="property.value.type"
+                        [(ngModel)]="property.name[lang]" (ngModelChange)="enableSave=true">
+                    </div>
+                    <div class="btn-group-block btn-dx">
+                      <button class="btn btn-small btn-no-width btn-no-bg">
+                        <i class="fa fa-eye icon" aria-hidden="true"></i>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-3 col-sm-1" *ngIf="property.type">
+                    <div class="form-check-no-label">
+                      <div class="form form-check">
+                        <input class="form-check-input" type="checkbox" [checked]="property.mandatory"
+                          (change)="property.mandatory=!property.mandatory;enableSave=true">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-5 col-sm-2 col-md-1" *ngIf="property.type">
+                    <div class="form-check-no-label">
+                      <div class="form form-check no-border-check">
+                        <input class="form-check-input" type="checkbox" [checked]="property.multivalue"
+                          (change)="property.multivalue=!property.multivalue;enableSave=true">
+                        <button class="btn btn-small btn-no-width btn-no-bg btn-trash"
+                          (click)="removeProperty(property)">
+                          <i class="fa fa-trash icon" aria-hidden="true"></i>
+                        </button>
+                        <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeProperty(property)">
+                          <i class="fa fa-arrows icon" aria-hidden="true"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+              <div class="form-content-container">
+                <div class="form-content">
+
+                  <div class="content-title">
+                    <h2 class="card-subtitle underline">Ontologie importate</h2>
+                    <a class="link" (click)="prova()">
+                      <i class="fa fa-times icon"></i>
+                    </a>
+                  </div>
+                </div>
+                <div>
+                  <a class="link" (click)="prova()">
+                    <i class="fa fa-plus icon"></i>Importa ontologia
+                  </a>
+                </div>
+              </div>
+
+
+
+
+            </div>
+          </div>
+        </div>
+
+
+
+        <!-- footer -->
+        <!-- <app-footer (onSave)="onSave()"></app-footer> -->
+
+      </div>
+    </div>
+  </div>
+
+  <div class="card-body" *ngIf="enableMap" style="display: flex; padding-top: 0;">
+    <app-map style="width: 100%;" [map]="map"></app-map>
+  </div>
+</div>
+
+<div class="card card-shadow card-base main-card-full mb-3 empty-ontology"
+  *ngIf="!ontology.items.length && !activeItem">
+  <div class="empty-icon">
+    <i class="fa fa-coffee" aria-hidden="true"></i>
+  </div>
+  <div class="empty-text">
+    Ontologia vuota, <br>utilizza uno degli strumenti per creare entità o concetti.
+  </div>
+  <div class="empty-btn">
+    <div class="btn btn-no-bg btn-icon-text" (click)="addEntity()">
+      <i class="fa fa-plus icon" aria-hidden="true"></i>Aggiungi entità
+    </div>
+    <div class="btn btn-no-bg btn-icon-text" (click)="addConcept()">
+      <i class="fa fa-plus icon" aria-hidden="true"></i>Aggiungi concetto
+    </div>
+    <div class="btn btn-no-bg btn-icon-text" (click)="goToExtraction()">
+      <i class="fa fa-quote-right icon" aria-hidden="true"></i>Estrazione terminologica
+    </div>
+  </div>
+</div>

@@ -1,0 +1,25 @@
+/*** LOGIN PAGE ***/
+.login-page {
+	background-color: $login-page-bg;
+	.card {
+		@include responsiveMin($sm) {
+			margin: 10% auto;
+		}
+	}
+
+	&.theme-violet {
+		background-repeat: no-repeat;
+		background-size: cover;
+		.card-login {
+			@include responsiveMin($sm) {
+				position: absolute;
+				right: -15px;
+				width: 100%;
+			}
+			@include responsiveMin($lg) {
+				right: -35px;
+			}
+		}
+	}
+}
+

@@ -1,0 +1,32 @@
+{
+    "name": "icariccu/peb",
+    "description": "metaFAD - PEB",
+    "license": "BSD 3-Clause",
+    "type": "module",
+    "autoload": {
+      "psr-4": {
+          "ICARICCU\\PEB\\": "src/"
+        }
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.64",
+        "vimeo/psalm": "^4.3"
+    },
+    "scripts": {
+        "phpstan": [
+            "phpstan analyse --memory-limit 1G -c phpstan.neon"
+        ],
+        "psalm": [
+            "psalm"
+        ],
+        "psalm-nocache": [
+            "psalm --clear-global-cache",
+            "psalm --clear-cache",
+            "psalm"
+        ],
+        "quality-test": [
+            "@phpstan",
+            "@psalm"
+        ]
+    }
+}

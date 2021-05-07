@@ -1,0 +1,69 @@
+/****** BOXES ******/
+/* BOX = it's made up of different components */
+
+/* box-create */
+.box-create {
+	margin: auto;
+	.main-title {
+		margin-bottom: 40px;
+	}
+	.form-input-text {
+		.form-control {
+			margin-bottom: 70px;
+		}
+	}
+}
+
+/* box-create-checkbox */
+.box-create-checkbox {
+	.btn-group {
+		margin-top: 30px;
+	}
+	.checkbox-group {
+		.card-only-checkbox {
+			float: left;
+		}
+	}
+}
+
+/* box-comment-bread */
+.box-comment-bread {
+	margin-top: 30px;
+	.title, .breadcrumb {
+		margin-bottom: 0;
+		padding-bottom: 0;
+		padding-top: 0;
+	}
+}
+
+/* box-select-textarea */
+.box-select-textarea {
+	form {
+		margin:auto;
+		.form-group {
+			&:not(:first-child) {
+				padding-top: 15px;
+			}
+		}
+	}
+	.text-sub-input {
+		font-size: 0.875rem;
+		font-style: italic;
+		padding-left: 10px;
+		position: relative;
+		bottom: 15px;
+	}
+	.links {
+		position: relative;
+		top: -10px;
+	}
+	.btn-group {
+		padding-top: 30px;
+	}
+	.btn {
+		&.btn-text {
+			text-transform: uppercase;
+			font-weight: 600;
+		}
+	}
+}

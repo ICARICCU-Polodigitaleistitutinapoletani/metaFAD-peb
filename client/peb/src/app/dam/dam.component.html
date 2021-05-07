@@ -1,0 +1,8 @@
+<div class="dam-component">
+  <div *ngIf="closeBtn" style="text-align: right; padding-right: 10px;background-color: #eee;">
+    <a (click)="closeBtn.emit()" style="cursor: pointer;"><i class="fa fa-remove icon icon-v3" aria-hidden="true" style="color: grey !important;"></i></a>
+  </div>
+  <div class="iframe-container">
+    <iframe #iframe frameborder="0" height="100%" marginheight="0" marginwidth="0" scrolling="yes" width="100%" [src]="src"></iframe>
+  </div>
+</div>

@@ -1,0 +1,22 @@
+<div class="row share">
+  <div class="col-12">
+    <!-- Box-create -->
+    <div class="box-create col-12 col-xl-5">
+      <div class="share-icon title-color">
+        <i aria-hidden="true" class="icon fa fa-share-alt"></i>
+      </div>
+      <h3 class="main-title">Pubblicazione ontologia nel registry</h3>
+
+      <h5 class="sub-title">Confermi la pubblicazione dell'ontologia nel registry?</h5>
+
+      <app-card [type]="'share'" [text]="text"></app-card>
+
+      <div class="btn-group d-block col-12">
+        <div class="row row-button content-end">
+          <button class="btn btn-no-bg btn-lg no-upper col-6 col-sm-4" (click)="goBack()">Annulla</button>
+          <button class="btn btn-lg btn-primary col-6 col-sm-4" (click)="confirm()">Conferma</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

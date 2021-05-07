@@ -1,0 +1,1300 @@
+<div class="edit-item-component">
+  <div class="side-right right-content" *ngIf="activeItem && !activeItem.editProperties">
+    <div class="item-type" *ngIf="appId!='metafad'">
+      <span class="item-type-label">{{activeItem.label || info.labels[activeItem.type]}}</span>
+    </div>
+    <ng-container *ngIf="!fromExist && !activeItem.fromTopOntology">
+      <div class="item-type" *ngIf="appId=='metafad' && activeItem.type==='entity'">
+        <span class="item-type-label">Entità</span>
+      </div>
+      <div class="item-type" *ngIf="appId=='metafad' && activeItem.type==='property'">
+        <span class="item-type-label">Proprietà</span>
+      </div>
+      <div class="item-type" *ngIf="appId=='metafad' && activeItem.type==='relation'">
+        <span class="item-type-label">Relazione</span>
+      </div>
+    </ng-container>
+    <form class="form-input-btn form-big" [formGroup]="titleForm" [hidden]="fromExist || activeItem.fromTopOntology">
+      <div class="form form-input form-title" [class.invalid]="invalidTitle">
+        <div *ngIf="(titleForm.value.title || invalidTitle) && activeItem.type=='terminology'" class="sub-title" style="top: -13px;" [class.invalid-subtitle]="invalidTitle">
+          Nome contenuto
+        </div>
+        <input *ngIf="!ternaryOrigin" class="form-control" placeholder="Nome*" name="title" autocomplete="off" formControlName="title"
+         [ngClass]="{ 'is-invalid': submitted && fTitle.title.errors }" (input)="invalidTitle=!titleForm.value.title" (change)="setName()" (blur)="setUri(activeItem.type=='terminology')" 
+         [readonly]="activeItem.readOnly || (ontology.published && activeItem.type!='terminology') || disableEditing">
+
+         <input *ngIf="ternaryOrigin" class="form-control" placeholder="Nome" name="title" autocomplete="off" formControlName="title"
+          [ngClass]="{ 'is-invalid': submitted && fTitle.title.errors }" (change)="setName()" (blur)="setUri(activeItem.type=='terminology');setUriFromName()" 
+          [readonly]="activeItem.readOnly || (ontology.published && activeItem.type!='terminology') || disableEditing">
+        
+         <div *ngIf="submitted && fTitle.title.errors && !ternaryOrigin" class="invalid-title">
+          <div *ngIf="fTitle.title.errors.required">Titolo obbligatorio</div>
+        </div>
+
+        <div *ngIf="invalidTitle && (activeItem.type!='terminology' || ternaryOrigin)" class="invalid-title" style="top: 0;">
+          Il nome non è univoco o contiene caratteri non ammissibili
+        </div>
+        
+        <ng-container *ngIf="checkForSave()"></ng-container>
+        <!-- <button class="btn btn-small btn-dx btn-save-item" (click)="onSaveItem(activeItem)"
+          [disabled]="!enableSave && (!contentForm || !contentForm.dirty)">
+          <i class="fa fa-save icon" aria-hidden="true"></i> Salva
+        </button>
+        <button class="btn btn-small btn-no-bg btn-dx" (click)="onDeleteItem(activeItem)">
+          <i class="fa fa-trash icon" aria-hidden="true"></i>
+        </button> -->
+      </div>
+    </form>
+    <div class="card card-content">
+
+      <div class="card-body" *ngIf="fromExist">
+        <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;">
+          <span class="block-title">Relazione</span>
+        </div>
+
+        <div class="form-input-dropdown form-input-text">
+          <div class="form-group row no-gutters">
+            <div class="col-12 form form-input">
+              <app-dropdown [item]="activeItem" [model]="existRelation ? existRelation.type : '-'" [enableFilter]="true"
+                [opts]="relationsDDOpts" (onSelectOpt)="setExistRelation($event)" [top]="info.topDomain" [label]="'Relazione'">
+              </app-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body" *ngIf="activeItem.fromTopOntology">
+        <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;">
+          <span class="block-title">Entità della Top Ontology</span>
+        </div>
+
+        <div class="form-input-dropdown form-input-text">
+          <div class="form-group row no-gutters">
+            <div class="col-12 form form-input">
+              <app-dropdown [item]="activeItem"
+                [model]="(activeItem.topEntity) ? superclass[activeItem.topEntity.value].name[lang] : '-'" [enableFilter]="true"
+                [opts]="superclassDDOpts" (onSelectOpt)="setTopEntity($event)" [selected]="activeItem.topEntity" [disabled]="activeItem.id">
+              </app-dropdown>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-container>
+        <div [class.invalid]="invalidName" *ngIf="appId=='metafad' && activeItem.type=='terminology' && !ternaryOrigin">
+          
+          <div *ngIf="activeItem.uriName || invalidName" class="sub-title" [class.invalid-subtitle]="invalidName">
+            Nome per generazione URI
+          </div>
+          <div style="margin-bottom: 10px;display: flex;margin-top: 10px;">
+            <input class="form-control uri-gen" placeholder="Nome per generazione URI*" name="uriName" autocomplete="off"
+            (input)="enableSave=true;invalidName=false;" (blur)="setUriFromName();invalidName=!activeItem.uriName" [(ngModel)]="activeItem.uriName" [readonly]="activeItem.readOnly">
+            <div class="uri-gen-from" *ngIf="!activeItem.readOnly">
+              <!-- <a class="link" (click)="genUriName('id')">Genera da ID interno</a> -->
+              <a class="link" (click)="genUriName('name')" (mousedown)="fromGenUriName=true">Genera da nome contenuto</a>
+            </div>
+          </div>
+          <div *ngIf="invalidName && activeItem.uriName" class="invalid-title">
+            Il nome non è univoco o contiene caratteri non ammissibili
+          </div>
+
+        </div>
+        
+        <!-- <div class="row entity-uri" *ngIf="ontology.showEditingUri && activeItem.type==='entity'">
+          <div class="title-group">
+            URI:
+          </div> -->
+        <div class="entity-uri" style="display: flex;">
+          <span class="item-type-label" style="color:grey;padding-left: 15px;padding-top:3px;">URI:</span>
+          <input class="form-control" placeholder="" name="uri" autocomplete="off" [(ngModel)]="activeItem.uri"
+            spellcheck="false" [readonly]="true" style="display: flex;flex: 1;">
+          <div style="align-self: center; display: flex; justify-content: flex-end; width: auto;" *ngIf="activeItem.type=='entity'">
+            <i style="color: #ed936b;font-size: 14px;" *ngIf="activeItem.superclass">Sottoclasse di: {{superclass[activeItem.superclass.value].name[lang]}}</i>
+          </div>
+        </div>
+
+        <div *ngIf="activeItem.readOnly && (activeItem.type=='relation' || activeItem.type=='property')" class="invalid">
+          <span class="invalid-title" style="top: 0;font-size: 13px;">Nota: Alcune modifiche sono state disabilitate in quanto esistono istanze dell'entità a cui la {{activeItem.type=='relation' ? 'relazione' : 'proprietà'}} fa riferimento</span>
+        </div>
+
+        <div *ngIf="disableEditing && activeItem.type=='entity'" class="invalid">
+          <span class="invalid-title" style="top: 0;font-size: 13px;">Nota: Alcune modifiche sono state disabilitate in quanto esistono istanze dell'entità corrente</span>
+        </div>
+
+        <!-- </div> -->
+      </ng-container>
+      <div class="card-body">
+
+        <ng-container *ngIf="appId=='metafad' && activeItem.type!='terminology'">
+
+          <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;">
+
+            <span class="block-title">Etichette</span>
+
+            <div class="col-12 flex-container no-padding">
+              <div class="col-10 no-padding">
+                <span class="block-subtitle">etichetta</span>
+              </div>
+              <div class="col-2 no-padding">
+                <span class="block-subtitle">lingua</span>
+              </div>
+            </div>
+          </div>
+          <ng-container *ngTemplateOutlet="labels"></ng-container>
+
+          <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+
+            <span class="block-title">Descrizioni</span>
+
+            <div class="col-12 flex-container no-padding">
+              <div class="col-10 no-padding">
+                <span class="block-subtitle">descrizione</span>
+              </div>
+              <div class="col-2 no-padding">
+                <span class="block-subtitle">lingua</span>
+              </div>
+            </div>
+          </div>
+          <ng-container *ngTemplateOutlet="descriptions"></ng-container>
+
+          <ng-container *ngIf="activeItem.type==='property'">
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title" style="font-weight: 600;">Tipo</span>
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+
+                  <app-dropdown [item]="activeItem" [model]="activeItem.value?.type || '-'"
+                    [opts]="liv2DDOpts['entity']['property']" (onSelectOpt)="setPropertyType2($event)" [disabled]="activeItem.readOnly">
+                  </app-dropdown>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Sottoproprietà di</span>
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+
+                  <app-dropdown [item]="activeItem" [model]="(activeItem.subpropertyOf) ? activeItem.subpropertyOf.type : '-'" [allowBlank]="true" [enableFilter]="true"
+                    [opts]="propertiesDDOpts" (onSelectOpt)="setSubproperty($event)" [filterIds]="[activeItem.id]" [disabled]="activeItem.readOnly" [top]="info.topDomain" [label]="'Proprietà'">
+                  </app-dropdown>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Caratteristiche</span>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="activeItem.mandatory" style="position: absolute;top: 5px;"
+                (change)="activeItem.mandatory=!activeItem.mandatory;enableSave=true" id="checkMandatory" [disabled]="activeItem.readOnly">
+              <label for="checkMandatory" style="margin-left: 25px;font-size: 14px;">Obbligatorio</label>
+            </div>
+
+            <div class="card card-edit card-edit-1">
+              <input type="checkbox" [checked]="!activeItem.multivalue" style="position: absolute;top: 5px;"
+                (change)="activeItem.multivalue=!activeItem.multivalue;enableSave=true" id="checkMultivalue" [disabled]="activeItem.readOnly">
+              <label for="checkMultivalue" style="margin-left: 25px;font-size: 14px;">Solo una</label>
+            </div>
+
+          </ng-container>
+
+          <ng-container *ngIf="activeItem.type==='relation'">
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Sottorelazione di</span>
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+                  <app-dropdown [item]="activeItem" [model]="(activeItem.subrelationOf) ? activeItem.subrelationOf.type : '-'" [allowBlank]="true"
+                    [opts]="relationsDDOpts" (onSelectOpt)="setSubrelation($event)" [filterIds]="[activeItem.id]" [enableFilter]="true"
+                    [disabled]="activeItem.readOnly || (fromExist && !existRelation) || ontology.published" [top]="info.topDomain" [label]="'Relazione'">
+                  </app-dropdown>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Inversa di</span>
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+                  <app-dropdown [item]="activeItem" [model]="(activeItem.reverseOf) ? activeItem.reverseOf.type : '-'" [allowBlank]="true"
+                    [opts]="relationsDDOpts" (onSelectOpt)="setReverse($event)" [filterIds]="reverseFilter" [hideSelf]="true" [enableFilter]="true"
+                    [disabled]="activeItem.readOnly || activeItem.symmetric || disable.reverseOf || (fromExist && !existRelation) || ontology.published">
+                  </app-dropdown>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Dominio</span>
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+
+                  <ng-select class="custom-autocomplete"
+                    [items]="autocompleteEntity$['domain'] | async" bindLabel="value"
+                    [addTag]="false" [hideSelected]="true"
+                    [loading]="autocompleteEntityLoading['domain']"
+                    [typeahead]="autocompleteEntityInput$['domain']" 
+                    notFoundText="Nessuna corrispondenza" typeToSearchText="Digita per cercare"
+                    [multiple]="true"
+                    [(ngModel)]="activeItem.domain"
+                    [clearable]="false"
+                    [disabled]="activeItem.domainReadOnly || (fromExist && !existRelation) || ontology.published"
+                    (change)="enableSave=true">
+
+                    <ng-template ng-label-tmp let-item="item">
+                      <span class="ng-value-icon left" (click)="clearItem(item.id, 'domain')" *ngIf="!activeItem.domainReadOnly && !item.readOnly">×</span>
+                      <span class="ng-value-label">{{item.value}}</span>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Codominio</span>
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+                  <ng-select class="custom-autocomplete"
+                    [items]="autocompleteEntity$['codomain'] | async" bindLabel="value"
+                    [addTag]="false" [hideSelected]="true"
+                    [loading]="autocompleteEntityLoading['codomain']"
+                    [typeahead]="autocompleteEntityInput$['codomain']" 
+                    notFoundText="Nessuna corrispondenza" typeToSearchText="Digita per cercare"
+                    [multiple]="true"
+                    [clearable]="false"
+                    [(ngModel)]="activeItem.codomain"
+                    [disabled]="disable.codomain || (fromExist && !existRelation) || ontology.published"
+                    (change)="enableSave=true">
+
+                    <ng-template ng-label-tmp let-item="item">
+                      <span class="ng-value-icon left" (click)="clearItem(item.id, 'codomain');enableSave=true;" *ngIf="!item.readOnly">×</span>
+                      <span class="ng-value-label">{{item.value}}</span>
+                    </ng-template>
+                  </ng-select>
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Caratteristiche</span>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="activeItem.mandatory" style="position: absolute;top: 5px;"
+                (change)="activeItem.mandatory=!activeItem.mandatory;enableSave=true" id="checkMandatory" [disabled]="(fromExist && !existRelation) || ontology.published || activeItem.readOnly">
+              <label for="checkMandatory" style="margin-left: 25px;font-size: 14px;">Obbligatoria</label>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="!activeItem.multivalue" style="position: absolute;top: 5px;"
+                (change)="activeItem.multivalue=!activeItem.multivalue;enableSave=true" id="checkMultivalue" [disabled]="(fromExist && !existRelation) || ontology.published || activeItem.readOnly">
+              <label for="checkMultivalue" style="margin-left: 25px;font-size: 14px;">Solo una</label>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="activeItem.transitive" style="position: absolute;top: 5px;"
+                (change)="activeItem.transitive=!activeItem.transitive;enableSave=true" id="checkTransitive" [disabled]="activeItem.readOnly || disable.transitive || (fromExist && !existRelation) || ontology.published">
+              <label for="checkTransitive" style="margin-left: 25px;font-size: 14px;">Transitiva</label>
+            </div>
+
+            <div class="card card-edit card-edit-1">
+              <input type="checkbox" [checked]="activeItem.symmetric" style="position: absolute;top: 5px;"
+                (change)="activeItem.symmetric=!activeItem.symmetric;enableSave=true" id="checkSymmetric" [disabled]="activeItem.readOnly || activeItem.reverseOf || (fromExist && !existRelation) || ontology.published">
+              <label for="checkSymmetric" style="margin-left: 25px;font-size: 14px;">Simmetrica</label>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="activeItem.type!=='property' && activeItem.type!=='relation'">
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+
+              <span class="block-title">Sottoclasse di</span>
+
+            </div>
+
+            <div class="form-input-dropdown form-input-text form-margin">
+              <div class="form-group row no-gutters">
+                <div class="col-12 form form-input">
+
+                  <app-dropdown [item]="activeItem"
+                    [model]="(activeItem.superclass) ? superclass[activeItem.superclass.value].name[lang] : '-'"
+                    [opts]="superclassDDOpts" (onSelectOpt)="setSuperclass($event)" [selected]="activeItem.superclass" [enableFilter]="true"
+                    [disabled]="disableEditing || activeItem.fromTopOntology || ontology.published" [allowBlank]="true" [top]="info.topDomain" [label]="'Entità'">
+                  </app-dropdown>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+
+              <div>
+                <span class="block-title" style="width: 70px;display: inline-block;">Proprietà</span>
+                <a class="link" (click)="addProperty()" style="font-size: 14px;margin-left: 20px;cursor: pointer;" *ngIf="!activeItem.fromTopOntology && !ontology.published">
+                  <i class="fa fa-plus icon"></i>
+                  <span>Aggiungi proprietà</span>
+                </a>
+              </div>
+
+              <ng-container *ngIf="props.length">
+                <div class="col-12 flex-container no-padding">
+                  <div class="col-1 no-padding"></div>
+                  <div class="col-1 no-padding" *ngIf="activeItem.automaticTitle">
+                    <span class="block-subtitle" style="font-size: 12px;">Usa per nome</span>
+                  </div>
+                  <div class="col-4 no-padding">
+                    <span class="block-subtitle">Nome</span>
+                  </div>
+                  <div class="no-padding" [class.col-5]="!activeItem.automaticTitle" [class.col-4]="activeItem.automaticTitle">
+                    <span class="block-subtitle">Tipo</span>
+                  </div>
+                  <div class="col-1 no-padding">
+                    <span class="block-subtitle">Obbligatorio</span>
+                  </div>
+                </div>
+                <ng-container *ngTemplateOutlet="propsTemplate"></ng-container>
+              </ng-container>
+
+
+            </div>
+
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+
+              <div>
+                <span class="block-title" style="width: 70px;display: inline-block;">Relazioni</span>
+                <a class="link" style="font-size: 14px;margin-left: 20px;cursor: pointer;" [popover]="popTemplate2" 
+                  placement="bottom" containerClass="link-container2" [outsideClick]="true" #pop="bs-popover" 
+                  [isOpen]="isOpen" *ngIf="!activeItem.fromTopOntology && !ontology.published">
+                  <i class="fa fa-plus icon"></i>
+                  <span>Aggiungi relazione</span>
+                </a>
+              </div>
+
+              <ng-container *ngIf="relations.length">
+                <div class="col-12 flex-container no-padding">
+                  <div class="col-1 no-padding"></div>
+                  <div class="col-1 no-padding" *ngIf="activeItem.automaticTitle">
+                    <span class="block-subtitle" style="font-size: 12px;">Usa per nome</span>
+                  </div>
+                  <div class="col-4 no-padding">
+                    <span class="block-subtitle">Nome</span>
+                  </div>
+                  <div class="no-padding" [class.col-4]="!activeItem.automaticTitle" [class.col-3]="activeItem.automaticTitle">
+                    <span class="block-subtitle">Codominio</span>
+                  </div>
+                  <div class="col-1 no-padding">
+                    <span class="block-subtitle">Obbligatorio</span>
+                  </div>
+                </div>
+                <ng-container *ngTemplateOutlet="relationsTemplate"></ng-container>
+              </ng-container>
+
+            </div>
+
+            
+            <div class="card card-edit card-edit-1 mb-3" style="margin-bottom: 0 !important;margin-top: 30px;">
+              <span class="block-title">Caratteristiche</span>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="activeItem.facilitated" style="position: absolute;top: 5px;"
+                (change)="activeItem.facilitated=!activeItem.facilitated;activeItem.ternary=false;enableSave=true" id="checkFacilitated" [disabled]="activeItem.readOnly || activeItem.ternary">
+              <label for="checkFacilitated" style="margin-left: 25px;font-size: 14px;">Compilazione agevolata</label>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="activeItem.ternary" style="position: absolute;top: 5px;"
+                (change)="activeItem.ternary=!activeItem.ternary;activeItem.facilitated=false;activeItem.automaticTitle=false;enableSave=true;checkAutomaticTitle();" id="checkTernary" [disabled]="activeItem.readOnly || activeItem.facilitated">
+              <label for="checkTernary" style="margin-left: 25px;font-size: 14px;">Classe ternaria</label>
+            </div>
+
+            <div class="card card-edit card-edit-1" style="margin-bottom: 5px;">
+              <input type="checkbox" [checked]="activeItem.automaticTitle" style="position: absolute;top: 5px;"
+                (change)="activeItem.automaticTitle=!activeItem.automaticTitle;activeItem.ternary=false;enableSave=true;checkAutomaticTitle();" id="checkTitle" [disabled]="activeItem.readOnly || activeItem.ternary">
+              <label for="checkTitle" style="margin-left: 25px;font-size: 14px;">Generazione automatica titolo</label>
+            </div>
+
+          </ng-container>
+        </ng-container>
+
+
+
+
+
+        <div class="card card-edit card-edit-1 mb-3" *ngIf="appId!='metafad'">
+          <div class="row">
+            <div class="col-11 links inline-editing" *ngIf="activeItem.type==='entity'">
+              <input class="form-check-input" type="checkbox" [checked]="activeItem.inline"
+                (change)="activeItem.inline=!activeItem.inline;enableSave=true">
+              <h2 class="card-subtitle">consenti editing inline</h2>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-group row no-gutters check-label" *ngIf="activeItem.type==='entity' && appId!='metafad'">
+          <div class="col-3 col-sm-1">
+            <!-- checkbox base (no-label) -->
+            <div class="form-check-no-label">
+              <div class="form form-check">
+                <span>Obbligatorio</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-5 col-sm-2 col-md-1">
+            <!-- checkbox base (no-label+button) -->
+            <div class="form-check-no-label">
+              <div class="form form-check">
+                <span>Multivalore</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-5 col-sm-2 col-md-1"></div>
+        </div>
+
+        <div class="form-input-dropdown form-input-text form-big form-margin" *ngIf="activeItem.type==='terminology'">
+          <div class="form-group row no-gutters">
+            <div class="col-12 form form-input">
+
+              <app-dropdown [item]="activeItem" [title]="'Tipologia di contenuto'"
+                [model]="(activeItem.superclass) ? superclass[activeItem.superclass.value].name[lang] : '-'" [enableFilter]="true"
+                [opts]="superclassDDOpts" (onSelectOpt)="setSuperclass($event)" [selected]="activeItem.superclass"
+                [disabled]="(activeItem.id || activeItem.disableType) || true" [top]="info.topDomain" [label]="'Entità'">
+              </app-dropdown>
+
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="activeItem.type==='entity' && appId!='metafad'">
+          <ng-container *ngTemplateOutlet="properties"></ng-container>
+        </ng-container>
+
+        <div class="accordion-container" *ngIf="activeItem.type!=='property' && activeItem.type!=='relation'">
+          <accordion [closeOthers]="oneAtATime">
+            <accordion-group (isOpenChange)="toggleAccordion($event, 'content')" [isOpen]="isAccordionOpen.content"
+              *ngIf="activeItem.type==='terminology'" [isDisabled]="!activeItem.content">
+              <div accordion-heading class="accordion-heading">
+                <span [class.disabled]="!activeItem.content">
+                  <i class="fa" aria-hidden="true" [class.fa-caret-right]="!isAccordionOpen.content"
+                    [class.fa-caret-down]="isAccordionOpen.content"></i>
+                  Scheda contenuto
+                </span>
+                <a class="link" (click)="addContentCard()" *ngIf="!activeItem.content"
+                  [class.disabled]="!activeItem.superclass">
+                  <i class="fa fa-plus icon"></i>
+                  <span>Aggiungi scheda contenuto</span>
+                </a>
+                <span class="content-card" *ngIf="activeItem.content && appId!='metafad'">
+                  <a *ngIf="info.features.links?.metaSemNet?.show" class="link link-metasemnet"
+                    (click)="openMetaSemNet($event)">
+                    <i class="fa fa-spinner icon"></i>{{info.features.links?.metaSemNet?.label}}
+                  </a>
+                  <span class="divider"> | </span>
+                  <a *ngIf="activeItem.complete" class="complete">Scheda completa</a>
+                  <a *ngIf="!activeItem.complete" class="no-complete">Scheda non completa</a>
+                  <button class="btn btn-icon btn-no-bg" (click)="removeContent($event)" style="margin-top: -5px;">
+                    <i class="fa fa-trash icon" aria-hidden="true"></i>
+                  </button>
+                </span>
+              </div>
+              <div class="form-content" *ngIf="activeItem.content && activeItem.content.length">
+                <form [formGroup]="contentForm">
+                  <!-- <div class="content-title">
+                    <h2 class="card-subtitle underline">Scheda contenuto</h2>
+                    <a class="link" (click)="removeContent()">
+                      <i class="fa fa-times icon"></i>
+                    </a>
+                  </div> -->
+                  <div formArrayName="content">
+                    <div *ngFor="let content of contentForm.get('content').controls; let i = index;" class="form-item"
+                      [ngStyle]="{'margin-left': content.controls.lev.value ? (content.controls.lev.value*15)+'px' : '0px'}">
+                      <div [formGroupName]="i" *ngIf="content.controls as c">
+
+                        <div *ngIf="c.firstRel.value" style="margin-top: 35px;border-top: 1px solid #ccc; padding-top: 10px;">Relazioni</div>
+
+                        <div class="label-container" style="display: flex;margin-top: 15px;margin-bottom: 5px;"
+                          [ngClass]="{'invalid-feedback': (submitted || enableSave) && (c.items.errors || c.items.invalid)}" >
+                          <div class="form-label" [ngClass]="{'subtitle': c.resolved.value}" style="width: auto;" [class.bold]="c.mandatory.value" [class.underline]="c.forAutomatic.value">{{c.name.value}}<span
+                              *ngIf="c.mandatory.value && false">*</span></div>
+                          <div>
+                            <a class="link" (click)="_addItem(i)"
+                              *ngIf="c.multivalue.value && c.type.value==='property' && !c.id.value.includes('fieldOpenList') && !c.id.value.includes('fieldInternalLink') && !c.id.value.includes('fieldMetafad')">
+                              <i class="fa fa-plus icon"></i>
+                            </a>
+
+                            <!-- <a class="link" (click)="addTerminology(ternaryEntities[c.contentId.value].id, activeItem.superclass.value)"
+                              *ngIf="c.multivalue.value && c.type.value==='relation' && ternaryRelations.indexOf(c.contentId.value)>-1">
+                              <i class="fa fa-plus icon"></i>
+                            </a> -->
+                          </div>
+                        </div>
+                        <div class="form-value" formArrayName="items">
+                          <div class="value-container"
+                            *ngFor="let _item of content.get('items').controls; let j = index;">
+                            <div [formGroupName]="j" *ngIf="_item.controls as item2"
+                              style="position: relative;margin-bottom: -1px;">
+                              <ng-container [ngSwitch]="c.type.value">
+                                <ng-container *ngSwitchCase="'relation'">
+                                  
+                                  <ng-container *ngIf="ternaryRelations.indexOf(c.contentId.value)===-1">
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteRelation$[c.contentId.value] | async" bindLabel="value"
+                                      [multiple]="c.multivalue.value" [addTag]="false" [hideSelected]="true"
+                                      [loading]="autocompleteRelationLoading[c.contentId.value]"
+                                      [typeahead]="autocompleteRelationInput$[c.contentId.value]" formControlName="value"
+                                      notFoundText="Nessuna corrispondenza" typeToSearchText="Digita per cercare"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                      (blur)="ac=null;checkForAutomatic(c.forAutomatic.value)" *ngIf="!c.resolved.value" [clearable]="!c.multivalue.value" (change)="checkRelationValue($event);"
+                                      [disabled]="superclass[activeItem.superclass.value].ternary && ternaryOrigin && !checkRelationCodomain(c.contentId.value)"
+                                      [class.disabled-select]="superclass[activeItem.superclass.value].ternary && ternaryOrigin && !checkRelationCodomain(c.contentId.value)">
+
+                                      <ng-template ng-label-tmp let-item="item">
+                                        <span class="ng-value-icon left" (click)="clearRelation(item.id, _item.controls, c);checkForAutomatic(c.forAutomatic.value)" *ngIf="!item.readOnly">×</span>
+                                        <span class="ng-value-label">{{item.value}}</span>
+                                      </ng-template>
+                                      
+                                    </ng-select>
+                                  </ng-container>
+                                  <ng-container *ngIf="ternaryRelations.indexOf(c.contentId.value)>-1">
+                                    <!-- <a>Nuovo {{ternaryEntities[c.contentId.value].value}}</a>  -->
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteRelation$[c.contentId.value] | async" bindLabel="value"
+                                      [multiple]="c.multivalue.value" [addTag]="false" [searchable]="true"
+                                      formControlName="value"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                      (blur)="ac=null;checkForAutomatic(c.forAutomatic.value)" *ngIf="!c.resolved.value" [clearable]="!c.multivalue.value" (change)="checkRelationValue($event);"
+                                      [disabled]="superclass[activeItem.superclass.value].ternary && ternaryOrigin && !checkRelationCodomain(c.contentId.value)"
+                                      [class.disabled-select]="superclass[activeItem.superclass.value].ternary && ternaryOrigin && !checkRelationCodomain(c.contentId.value)">
+                                  
+                                      <ng-template ng-label-tmp let-item="item">
+                                        <span class="ng-value-icon left" (click)="clearRelation(item.id, _item.controls, c);checkForAutomatic(c.forAutomatic.value)" *ngIf="!item.readOnly">×</span>
+                                        <span class="ng-value-label">{{item.value}}</span>
+                                      </ng-template>
+
+                                    </ng-select>
+                                  </ng-container>
+                                </ng-container>
+                                <ng-container *ngSwitchCase="'property'">
+                                  <ng-container *ngIf="c.id.value.includes('fieldText') || c.id.value.includes('fieldUrl')">
+                                    <input class="form-control" placeholder="" name="text" autocomplete="off"
+                                      formControlName="value" (input)="enableSave=true" (blur)="checkForAutomatic(c.forAutomatic.value)"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }">
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldLongText')">
+                                    <textarea class="form-control" placeholder="" formControlName="value"
+                                      name="longText"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }"></textarea>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldDescriptiveText')">
+                                    <editor [init]="editorConfig" (onBlur)="onEditorBlur($event)"
+                                      (onKeyUp)="onEditorKeyUp($event)" (onChange)="onEditorChange($event)"
+                                      formControlName="value"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }">
+                                    </editor>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldNumber')">
+                                    <input class="form-control" placeholder="" type="text" autocomplete="off"
+                                      formControlName="value" (keypress)="allowNumbersOnly($event, true)" (blur)="checkForAutomatic(c.forAutomatic.value)"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }">
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldPositiveNumber')">
+                                    <input class="form-control" placeholder="" type="text" autocomplete="off"
+                                      formControlName="value" (keypress)="allowNumbersOnly($event)" (blur)="checkForAutomatic(c.forAutomatic.value)"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }">
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldBoolean')">
+                                    <input placeholder="" type="checkbox" autocomplete="off"
+                                      formControlName="value" [ngClass]="{ 'is-invalid': submitted && item2.value.errors }">
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldDate') && !c.id.value.includes('fieldDateInterval')">
+                                    <input class="form-control" placeholder="" type="date" autocomplete="off"
+                                      formControlName="value" (change)="checkForAutomatic(c.forAutomatic.value)"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors, 'date-padding': c.multivalue.value && content.get('items').controls.length>1 }">
+                                  </ng-container>
+
+                                  <ng-container *ngIf="c.id.value.includes('fieldDateInterval')">
+                                    <div style="display: flex;">
+                                      <input class="form-control" placeholder="" type="date" autocomplete="off"
+                                        formControlName="value" (change)="checkForAutomatic(c.forAutomatic.value)"
+                                        [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" style="margin-right: 5px;">
+                                      <input class="form-control" placeholder="" type="date" autocomplete="off"
+                                        formControlName="value2" (change)="checkForAutomatic(c.forAutomatic.value)"
+                                        [ngClass]="{ 'is-invalid': submitted && item2.value.errors, 'date-padding': c.multivalue.value && content.get('items').controls.length>1 }" style="margin-left: 5px;">
+                                    </div>
+                                  </ng-container>
+
+                                  <ng-container *ngIf="c.id.value.includes('fieldList')">
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteFieldOpenList$[c.contentId.value] | async" bindLabel="value"
+                                      [multiple]="c.multivalue.value" [addTag]="false" [hideSelected]="true"
+                                      [loading]="autocompleteFieldOpenListLoading[c.contentId.value]"
+                                      [typeahead]="autocompleteFieldOpenListInput$[c.contentId.value]"
+                                      formControlName="value" notFoundText="Nessuna corrispondenza"
+                                      typeToSearchText="Digita per cercare"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                      (blur)="ac=null">
+                                    </ng-select>
+                                  </ng-container>
+
+                                  <ng-container *ngIf="c.id.value.includes('fieldImage')">
+                                    DAM picker image
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldMedia')">
+                                    <div class="dam-picker" [ngClass]="{'have-button': (c.multivalue.value && content.get('items').controls.length>1) || item2.value.value}">
+                                      <div class="picker-container" (click)="openDam(i, j)">
+                                        <div class="media-container">
+                                          <span class="text-secondary" *ngIf="!item2.value.value">Nessun media selezionato</span>
+                                          <img *ngIf="item2.value.value" [src]="item2.value.value.thumbnail" alt="">
+                                        </div>
+                                      </div>
+                                      <div class="btn-group-block btn-dx btn-picker"
+                                        *ngIf="(c.multivalue.value && content.get('items').controls.length>1) || item2.value.value">
+                                        <span *ngIf="item2.value.value">{{item2.value.value.title}}</span>
+                                        <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeItem(i, j, content.get('items').controls.length)">
+                                          <i class="fa fa-trash icon" aria-hidden="true"></i>
+                                        </button>
+                                      </div>
+
+                                    </div>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldOpenList')">
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteFieldOpenList$[c.contentId.value] | async" bindLabel="value"
+                                      [multiple]="c.multivalue.value" [addTag]="false" [hideSelected]="true"
+                                      [loading]="autocompleteFieldOpenListLoading[c.contentId.value]"
+                                      [typeahead]="autocompleteFieldOpenListInput$[c.contentId.value]"
+                                      formControlName="value" notFoundText="Nessuna corrispondenza"
+                                      typeToSearchText="Digita per cercare"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                      (blur)="ac=null">
+                                    </ng-select>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldExternalImage')">
+                                    <input class="form-control" placeholder="" type="url" autocomplete="off"
+                                      formControlName="value"
+                                      [ngClass]="{ 'is-invalid': submitted && (item2.value.errors || item.value.invalid) }">
+                                    <div *ngIf="submitted && item2.value.value && item2.value.invalid"
+                                      class="invalid-feedback">
+                                      URL non valido
+                                    </div>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldExternalLink')">
+                                    <input class="form-control" placeholder="" type="url" autocomplete="off"
+                                      formControlName="value"
+                                      [ngClass]="{ 'is-invalid': submitted && (item2.value.errors || item2.value.invalid) }">
+                                    <div *ngIf="submitted && item2.value.value && item2.value.invalid"
+                                      class="invalid-feedback">
+                                      URL non valido
+                                    </div>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldInternalLink')">
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteFieldInternalLink$[c.contentId.value] | async"
+                                      bindLabel="value" [multiple]="c.multivalue.value" [addTag]="false"
+                                      [hideSelected]="true"
+                                      [loading]="autocompleteFieldInternalLinkLoading[c.contentId.value]"
+                                      [typeahead]="autocompleteFieldInternalLinkInput$[c.contentId.value]"
+                                      formControlName="value" notFoundText="Nessuna corrispondenza"
+                                      typeToSearchText="Digita per cercare"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                      (blur)="ac=null">
+                                    </ng-select>
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldMetafad') && !c.id.value.includes('fieldMetafadAut')">
+                                    
+                                    <!-- <div class="dam-picker" [ngClass]="{'have-button': (c.multivalue.value && content.get('items').controls.length>1) || item2.value.value}">
+                                      <div class="picker-container" (click)="openDam(i, j, 'metafad')">
+                                        <div class="media-container">
+                                          <span class="text-secondary" *ngIf="!item2.value.value">Nessun media selezionato</span>
+                                          <img *ngIf="item2.value.value" [src]="item2.value.value.thumbnail" alt="">
+                                        </div>
+                                      </div>
+                                      <div class="btn-group-block btn-dx btn-picker"
+                                        *ngIf="(c.multivalue.value && content.get('items').controls.length>1) || item2.value.value">
+                                        <span *ngIf="item2.value.value">{{item2.value.value.title}}</span>
+                                        <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeItem(i, j, content.get('items').controls.length)">
+                                          <i class="fa fa-trash icon" aria-hidden="true"></i>
+                                        </button>
+                                      </div>
+                                    </div> -->
+
+                                  <ng-select class="custom-autocomplete"
+                                    [items]="autocompleteFieldMetafad"
+                                    bindLabel="value" [multiple]="c.multivalue.value" [addTag]="false"
+                                    [hideSelected]="false"
+                                    formControlName="value" notFoundText="Nessuna corrispondenza"
+                                    typeToSearchText="Digita per cercare"
+                                    [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                    (change)="openMetafad($event, i, j, 'metafad')"
+                                    [searchable]="false"
+                                    (blur)="ac=null">
+
+                                    <!-- <ng-template ng-label-tmp let-item="item">
+                                      <span class="ng-value-icon left" (click)="clearMetafadItem(item.id, _item.controls, c)" *ngIf="!item.readOnly">×</span>
+                                      <span class="ng-value-label">{{item.value}}</span>
+                                    </ng-template> -->
+
+                                  </ng-select>
+
+                                  </ng-container>
+                                  <ng-container *ngIf="c.id.value.includes('fieldMetafadAut')">
+                                    
+                                    <!-- <div class="dam-picker" [ngClass]="{'have-button': (c.multivalue.value && content.get('items').controls.length>1) || item2.value.value}">
+                                      <div class="picker-container" (click)="openDam(i, j, 'metafadAut')">
+                                        <div class="media-container">
+                                          <span class="text-secondary" *ngIf="!item2.value.value">Nessun media selezionato</span>
+                                          <img *ngIf="item2.value.value" [src]="item2.value.value.thumbnail" alt="">
+                                        </div>
+                                      </div>
+                                      <div class="btn-group-block btn-dx btn-picker"
+                                        *ngIf="(c.multivalue.value && content.get('items').controls.length>1) || item2.value.value">
+                                        <span *ngIf="item2.value.value">{{item2.value.value.title}}</span>
+                                        <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeItem(i, j, content.get('items').controls.length)">
+                                          <i class="fa fa-trash icon" aria-hidden="true"></i>
+                                        </button>
+                                      </div>
+                                    </div> -->
+                                    <ng-select class="custom-autocomplete"
+                                      [items]="autocompleteFieldMetafadAut"
+                                      bindLabel="value" [multiple]="c.multivalue.value" [addTag]="false"
+                                      [hideSelected]="false"
+                                      formControlName="value" notFoundText="Nessuna corrispondenza"
+                                      typeToSearchText="Digita per cercare"
+                                      [ngClass]="{ 'is-invalid': submitted && item2.value.errors }" (focus)="ac=c"
+                                      (change)="openMetafad($event, i, j, 'metafadAut')"
+                                      [searchable]="false"
+                                      (blur)="ac=null">
+
+                                      <!-- <ng-template ng-label-tmp let-item="item">
+                                        <span class="ng-value-icon left" (click)="clearMetafadItem(item.id, _item.controls, c)" *ngIf="!item.readOnly">×</span>
+                                        <span class="ng-value-label">{{item.value}}</span>
+                                      </ng-template> -->
+
+                                    </ng-select>
+
+                                  </ng-container>
+                                </ng-container>
+                              </ng-container>
+                              <div class="btn-group-block btn-dx"
+                                *ngIf="c.multivalue.value && c.type.value==='property' && !c.id.value.includes('fieldOpenList') && !c.id.value.includes('fieldInternalLink') && !c.id.value.includes('fieldImage') && !c.id.value.includes('fieldMedia') && !c.id.value.includes('fieldMetafad') && content.get('items').controls.length>1">
+                                <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeItem(i, j)"
+                                  *ngIf="activeItem.type!=='entity'">
+                                  <i class="fa fa-trash icon" aria-hidden="true"></i>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </accordion-group>
+            <accordion-group (isOpenChange)="toggleAccordion($event, 'graph')" [isOpen]="isAccordionOpen.graph"
+              [isDisabled]="!activeItem.graph" [panelClass]="rel-graph-panel" class="rel-graph-panel rel-graph-container">
+              <div accordion-heading style="text-align: left; padding-left: 2px;"
+                [class.disabled]="!activeItem.graph">
+                <i class="fa" aria-hidden="true" [class.fa-caret-right]="!isAccordionOpen.graph"
+                  [class.fa-caret-down]="isAccordionOpen.graph"></i>
+                Grafo relazioni
+              </div>
+              <div>
+                <app-rel-graph [graph]="activeItem.graph" [redraw]="redrawGraph"></app-rel-graph>
+              </div>
+            </accordion-group>
+            <accordion-group (isOpenChange)="toggleAccordion($event, 'instance')" *ngIf="activeItem.type==='entity'"
+              [isOpen]="isAccordionOpen.instance" [isDisabled]="!activeItem.id">
+              <div accordion-heading class="accordion-heading">
+                <span [class.disabled]="!activeItem.id">
+                  <i class="fa" aria-hidden="true" [class.fa-caret-right]="!isAccordionOpen.instance"
+                    [class.fa-caret-down]="isAccordionOpen.instance"></i>
+                  Istanze
+                </span>
+                <a class="link" (click)="addTerminology(activeItem.id)"
+                  *ngIf="info.features.addTerminology && appId!='metafad'" [class.disabled]="!activeItem.id">
+                  <i class="fa fa-plus icon"></i>
+                  <span>Aggiungi termine</span>
+                </a>
+              </div>
+              <div>
+                <ng-container *ngTemplateOutlet="terminologies"></ng-container>
+              </div>
+            </accordion-group>
+            <accordion-group (isOpenChange)="toggleAccordion($event, 'properties')"
+              [isOpen]="isAccordionOpen.properties" *ngIf="activeItem.type==='terminology' && appId!='metafad'">
+              <div accordion-heading style="text-align: left; padding-left: 2px;">
+                <i class="fa" aria-hidden="true" [class.fa-caret-right]="!isAccordionOpen.properties"
+                  [class.fa-caret-down]="isAccordionOpen.properties"></i>
+                Proprietà lessicali
+              </div>
+              <div>
+                <ng-container *ngTemplateOutlet="properties"></ng-container>
+              </div>
+            </accordion-group>
+          </accordion>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="side-right right-content" *ngIf="activeItem && activeItem.editProperties">
+    <div class="form-input-btn form-big">
+      <div class="form form-input form-title">
+        <div class="form-control">
+          Proprietà
+        </div>
+        <button class="btn btn-small btn-dx btn-save-item" (click)="onSaveDataProperties(activeItem)">
+          <i class="fa fa-save icon" aria-hidden="true"></i> Salva
+        </button>
+      </div>
+    </div>
+    <div class="card card-border card-content">
+      <div class="card-body">
+        <div class="card card-edit card-edit-1 mb-3">
+          <div class="row">
+            <div class="col-1 title-group">
+              <h2 class="card-subtitle">Data type property</h2>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row no-gutters check-label">
+          <div class="col-3 col-sm-1">
+            <div class="form-check-no-label">
+              <div class="form form-check">
+                <span>Obbligatorio</span>
+              </div>
+            </div>
+          </div>
+          <div class="col-5 col-sm-2 col-md-1">
+            <div class="form-check-no-label">
+              <div class="form form-check">
+                <span>Multivalore</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-input-btn form-input-btn-icon properties-container" [sortablejs]="activeItem.properties"
+          [sortablejsOptions]="sortableOpts">
+          <div class="form-group row no-gutters" *ngFor="let property of activeItem.properties; let last = last;"
+            [ngClass]="{'last-row': last}">
+            <div class="col-12 col-sm-4 form-input-dropdown col-md-3">
+              <div class="form form-input">
+                <app-dropdown [item]="property" [model]="info.labels[property.type] || '-'"
+                  [opts]="liv1DDOpts['entity']" (onSelectOpt)="setPropertyType($event)"
+                  [filterIds]="['relation', 'superclass']">
+                </app-dropdown>
+              </div>
+            </div>
+            <div class="col-12 col-sm-4 form-input-dropdown col-md-4" *ngIf="property.type">
+              <div class="form form-input">
+                <app-dropdown [item]="property" [model]="property.value.type || '-'"
+                  [opts]="liv2DDOpts['entity'][property.type]" (onSelectOpt)="setPropertyValue($event)">
+                </app-dropdown>
+              </div>
+            </div>
+            <div class="col-12 col-sm-4 form form-input col-md-3" *ngIf="property.type">
+              <div [ngClass]="{'empty-col': !property.value.type}">
+                <input class="form-control" placeholder="" *ngIf="property.value.type" [(ngModel)]="property.name[lang]"
+                  (ngModelChange)="enableSave=true">
+              </div>
+              <div class="btn-group-block btn-dx">
+                <button class="btn btn-small btn-no-width btn-no-bg">
+                  <i class="fa fa-eye icon" aria-hidden="true"></i>
+                </button>
+              </div>
+            </div>
+            <div class="col-3 col-sm-1" *ngIf="property.type">
+              <div class="form-check-no-label">
+                <div class="form form-check">
+                  <input class="form-check-input" type="checkbox" [checked]="property.mandatory"
+                    (change)="property.mandatory=!property.mandatory;enableSave=true">
+                </div>
+              </div>
+            </div>
+            <div class="col-5 col-sm-2 col-md-1" *ngIf="property.type">
+              <div class="form-check-no-label">
+                <div class="form form-check no-border-check">
+                  <input class="form-check-input" type="checkbox" [checked]="property.multivalue"
+                    (change)="property.multivalue=!property.multivalue;enableSave=true">
+                  <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeProperty(property)">
+                    <i class="fa fa-trash icon" aria-hidden="true"></i>
+                  </button>
+                  <button class="btn btn-small btn-no-width btn-no-bg" (click)="removeProperty(property)">
+                    <i class="fa fa-arrows icon" aria-hidden="true"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="form-content-container">
+          <div class="form-content">
+
+            <div class="content-title">
+              <h2 class="card-subtitle underline">Ontologie importate</h2>
+              <a class="link" (click)="prova()">
+                <i class="fa fa-times icon"></i>
+              </a>
+            </div>
+          </div>
+          <div>
+            <a class="link" (click)="prova()">
+              <i class="fa fa-plus icon"></i>Importa ontologia
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+  <!-- footer -->
+  <!-- <app-footer (onSave)="onSave()"></app-footer> -->
+
+</div>
+
+<ng-template #properties>
+  <div class="form-input-btn form-input-btn-icon properties-container" [sortablejs]="activeItem.properties"
+    [sortablejsOptions]="sortableOpts">
+
+    <div class="form-group row no-gutters" *ngFor="let property of activeItem.properties; let last = last;"
+      [ngClass]="{'last-row': last}">
+
+      <div class="col-12 col-sm-4 col-md-2 form-input-dropdown">
+        <div class="form form-input">
+          <app-dropdown [item]="property" [model]="info.labels[property.type] || '-'"
+            [opts]="liv1DDOpts[activeItem.type]" (onSelectOpt)="setPropertyType($event)"
+            [filterIds]="(activeItem.type==='terminology' && activeItem.superclass) ? ['relation'] : null">
+          </app-dropdown>
+        </div>
+      </div>
+      <div class="col-12 col-sm-3 form-input-dropdown" *ngIf="property.type"
+        [ngClass]="{'col-md-4': activeItem.type==='entity'}">
+
+        <div class="form form-input">
+          <app-dropdown
+            *ngIf="property.type!=='superclass' && property.type!=='category' && (activeItem.type!=='entity' || property.type!=='relation')"
+            [item]="property" [model]="property.value.type || '-'" [opts]="liv2DDOpts[activeItem.type][property.type]"
+            (onSelectOpt)="setPropertyValue($event)">
+          </app-dropdown>
+          <!-- <app-dropdown *ngIf="property.type==='category'" [item]="property" [model]="property.label || '-'" [opts]="liv2DDOpts[activeItem.type][property.type]"
+                  (onSelectOpt)="setPropertyValue($event)">
+                </app-dropdown> -->
+          <div *ngIf="property.type==='category'" [ngClass]="{'empty-col': !property.type}">
+            <label class="peso" for="peso">Peso</label>
+            <input id="peso" class="form-control" type="number" placeholder="" *ngIf="property.type"
+              [(ngModel)]="property.label" (ngModelChange)="enableSave=true">
+          </div>
+          <app-dropdown *ngIf="property.type==='superclass'" [item]="property"
+            [model]="(property.value) ? superclass[property.value].name[lang] : '-'"
+            [opts]="liv2DDOpts[activeItem.type][property.type]" [filter]="activeItem.id"
+            (onSelectOpt)="setPropertyValue($event)">
+          </app-dropdown>
+          <!-- dropdown a due colonne -->
+          <app-dropdown *ngIf="activeItem.type==='entity' && property.type==='relation'" [type]="'2'" [item]="property"
+            [model]="(property.value.type) ? ( (property.entity) ? (property.value.type+':'+property.value.value.type+':'+property.entity.type) : (property.value.type+':'+property.value.value.type) ) : '-'"
+            [opts]="liv2DDOpts[activeItem.type][property.type]" [superclass]="superclassDDOpts"
+            (onSelectOpt)="setPropertyValue($event)">
+          </app-dropdown>
+        </div>
+      </div>
+      <div class="col-12 col-sm-4 form form-input " *ngIf="property.type"
+        [ngClass]="{'col-md-3': activeItem.type==='entity', 'no-border terminology': activeItem.type!=='entity'}">
+        <div *ngIf="property.type!=='category'"
+          [ngClass]="{'empty-col': property.type==='superclass' || !property.value.type, 'empty-no-border': activeItem.type!=='entity'}">
+          <input class="form-control" placeholder="" *ngIf="property.type!=='superclass' && property.value.type"
+            [(ngModel)]="property.name[lang]" (ngModelChange)="enableSave=true">
+        </div>
+        <div *ngIf="property.type==='category'"
+          [ngClass]="{'empty-col': !property.label, 'empty-no-border': activeItem.type!=='entity'}">
+          <input class="form-control" placeholder="" *ngIf="property.label" [(ngModel)]="property.value"
+            (ngModelChange)="enableSave=true">
+        </div>
+        <div class="btn-group-block btn-dx">
+          <button class="btn btn-small btn-no-width btn-no-bg btn-eye">
+            <i class="fa fa-eye icon" aria-hidden="true"></i>
+          </button>
+          <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeProperty(property)"
+            *ngIf="activeItem.type!=='entity'">
+            <i class="fa fa-trash icon" aria-hidden="true"></i>
+          </button>
+          <button class="btn btn-small btn-no-width btn-no-bg btn-move" (click)="removeProperty(property)"
+            *ngIf="activeItem.type!=='entity'">
+            <i class="fa fa-arrows icon" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="col-3 col-sm-1" *ngIf="activeItem.type==='entity' && property.type">
+        <!-- checkbox base (no-label) -->
+        <div class="form-check-no-label">
+          <div class="form form-check">
+            <input class="form-check-input" type="checkbox" *ngIf="property.type!=='superclass'"
+              [checked]="property.mandatory" (change)="property.mandatory=!property.mandatory;enableSave=true">
+          </div>
+        </div>
+      </div>
+      <div class="col-5 col-sm-2 col-md-1" *ngIf="activeItem.type==='entity' && property.type">
+        <!-- checkbox base (no-label+button) -->
+        <div class="form-check-no-label">
+          <div class="form form-check">
+            <input class="form-check-input" type="checkbox" *ngIf="property.type!=='superclass'"
+              [checked]="property.multivalue" (change)="property.multivalue=!property.multivalue;enableSave=true">
+          </div>
+        </div>
+      </div>
+
+      <div class="col-5 col-sm-2 col-md-1" *ngIf="activeItem.type==='entity' && property.type">
+        <!-- checkbox base (no-label+button) -->
+        <div class="form-check-no-label">
+          <div class="form form-check no-border-check btn-container">
+            <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeProperty(property)">
+              <i class="fa fa-trash icon" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-small btn-no-width btn-no-bg btn-arrows" (click)="removeProperty(property)">
+              <i class="fa fa-arrows icon" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #terminologies>
+  <div class="form-input-btn form-input-btn-icon properties-container" style="margin-bottom: 20px;"
+    *ngIf="activeItem.terminologies && activeItem.terminologies.length">
+    <div class="form-group row no-gutters row-terminology"
+      *ngFor="let terminology of activeItem.terminologies let last = last;" [ngClass]="{'last-row': last}">
+
+      <div class="card flex">
+        <div class="title-group">
+          <h5 class="card-title">{{terminology.name[lang]}}</h5>
+          <h6 class="card-subtitle">{{terminology.uri || terminology.id}}</h6>
+        </div>
+        <div class="card-footer pt-0 flex" *ngIf="appId!='metafad'">
+          <ul class="list-inline list-terminology" *ngIf="info.user.type==='all' || info.user.type==='terminology'">
+            <li class="list-inline-item">
+              <i (click)="editTerminology(terminology)" class="fa fa-pencil icon" aria-hidden="true"
+                style="width: 15px;"></i>
+              <!-- <span class="text-secondary">Modifica</span> -->
+            </li>
+            <li class="list-inline-item">
+              <span class="divider"></span>
+            </li>
+            <li *ngIf="terminology.complete" class="list-inline-item">
+              <a class="complete">Scheda completa</a>
+            </li>
+            <li *ngIf="!terminology.complete" class="list-inline-item">
+              <a class="no-complete">Scheda non completa</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <ng-container *ngIf="activeItem.searchApplied.limit < activeItem.searchApplied.tot">
+    <app-pagination [pages]="activeItem.pagination.pages" [current]="activeItem.pagination.page-1"
+      [change]="activeItem.pagination.change" (onChange)="onChangePage($event)">
+    </app-pagination>
+  </ng-container>
+</ng-template>
+
+
+<ng-template #labels>
+  <div class="form-input-btn form-input-btn-icon properties-container" *ngIf="activeItem.labels.length">
+
+    <div class="form-group row no-gutters" *ngFor="let label of activeItem.labels; let last = last;"
+      [ngClass]="{'last-row': last}">
+
+      <div class="col-10 form form-input">
+        <input class="form-control" placeholder="" [(ngModel)]="label.name" (ngModelChange)="enableSave=true"
+          (blur)="checkLabels()" [disabled]="(fromExist && !existRelation) || activeItem.fromTopOntology || ontology.published">
+      </div>
+      <div class="col-1 form form-input">
+        <app-dropdown [item]="label" [model]="label.lang || '-'" [opts]="langDDOpts"
+          (onSelectOpt)="setLangValue($event)" [disabled]="(fromExist && !existRelation) || activeItem.fromTopOntology || ontology.published">
+        </app-dropdown>
+      </div>
+      <div class="col-1 form form-input" style="text-align: center;">
+        <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeLabel(label)"
+          [disabled]="(!label.name && !label.lang) || activeItem.fromTopOntology || ontology.published">
+          <i class="fa fa-trash icon icon-v1" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #descriptions>
+  <div class="form-input-btn form-input-btn-icon properties-container" *ngIf="activeItem.descriptions.length">
+
+    <div class="form-group row no-gutters" *ngFor="let desc of activeItem.descriptions; let last = last;"
+      [ngClass]="{'last-row': last}">
+
+      <div class="col-10 form form-input">
+        <input class="form-control" placeholder="" [(ngModel)]="desc.name" (ngModelChange)="enableSave=true"
+          (blur)="checkDescriptions()" [disabled]="(fromExist && !existRelation) || activeItem.fromTopOntology || ontology.published">
+      </div>
+      <div class="col-1 form form-input">
+
+        <app-dropdown [item]="desc" [model]="desc.lang || '-'" [opts]="langDDOpts" (onSelectOpt)="setLangValue($event)" 
+          [disabled]="(fromExist && !existRelation) || activeItem.fromTopOntology || ontology.published">
+        </app-dropdown>
+      </div>
+      <div class="col-1 form form-input" style="text-align: center;">
+        <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeDescription(desc)"
+          [disabled]="(!desc.name && !desc.lang) || activeItem.fromTopOntology || ontology.published">
+          <i class="fa fa-trash icon icon-v1" aria-hidden="true"></i>
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #propsTemplate>
+  <div id="properties" class="form-input-btn form-input-btn-icon properties-container" [sortablejs]="props" [sortablejsOptions]="sortableOpts">
+
+    <div class="form-group row no-gutters" *ngFor="let p of props; let last = last; let i = index;" [ngClass]="{'last-row': last}">
+
+      <div class="col-1 form form-input prop-block" style="justify-content: center;">
+        <button class="btn btn-small btn-no-width btn-no-bg btn-arrows" style="top: auto;right: auto;">
+          <i aria-hidden="true" class="fa fa-arrows icon" style="font-size: 14px;"></i>
+        </button>
+      </div>
+      <div class="col-1 form form-input prop-block" style="justify-content: center;padding-top: 13px;" *ngIf="activeItem.automaticTitle">
+        <input class="form-check-input" type="checkbox" [checked]="p.forAutomatic" (change)="p.forAutomatic=!p.forAutomatic;enableSave=true" style="position: relative; margin: 0;"
+        *ngIf="p.value.id.includes('fieldText') || p.value.id.includes('fieldNumber') || p.value.id.includes('fieldPositiveNumber') || p.value.id.includes('fieldDate') || p.value.id.includes('fieldDateInterval')">
+      </div>
+      <div class="col-4 form form-input prop-block" style="display: flex;justify-content: space-between;padding: 8px 5px 5px 10px;">
+        <span style="align-self: flex-start;">{{p.name[lang]}}</span>
+        <div class="properties-props-container">
+          <i class="properties-props" *ngIf="p.inherited">Ereditata da: {{(activeItem.superclass) ? superclass[activeItem.superclass.value].name[lang] : '-'}}</i>
+        </div>
+      </div>
+      <div class="form form-input prop-block" style="padding-top: 8px;" [class.col-5]="!activeItem.automaticTitle" [class.col-4]="activeItem.automaticTitle">
+        <span>{{p.value.type}}</span>
+      </div>
+      <div class="col-1 form form-input prop-block" style="justify-content: center;padding-top: 13px;">
+        <input class="form-check-input" type="checkbox" [checked]="p.mandatory" [disabled]="true" style="position: relative; margin: 0;">
+      </div>
+      <div class="col-1 form form-input prop-block last-prop">
+
+        <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="editProp(p, i)" style="position: relative;top: auto;right: auto;padding-right: 5px;" 
+          [disabled]="p.inherited || activeItem.fromTopOntology || ontology.published">
+          <i class="fa fa-pencil icon icon-v2" aria-hidden="true"></i>
+        </button>
+
+        <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeProp(i)" style="position: relative;top: auto;right: auto;padding-left: 5px;" 
+          [disabled]="(disableEditing && p.id) || p.inherited || activeItem.fromTopOntology || ontology.published">
+          <i class="fa fa-trash icon icon-v1" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #relationsTemplate>
+  <div id="relations" class="form-input-btn form-input-btn-icon properties-container" [sortablejs]="relations" [sortablejsOptions]="sortableOpts">
+
+    <div class="form-group row no-gutters" *ngFor="let r of relations; let last = last; let i = index;" [ngClass]="{'last-row': last}">
+      
+      <div class="col-1 form form-input prop-block" style="justify-content: center;">
+        <button class="btn btn-small btn-no-width btn-no-bg btn-arrows" style="top: auto;right: auto;">
+          <i aria-hidden="true" class="fa fa-arrows icon" style="font-size: 14px;"></i>
+        </button>
+      </div>
+      <div class="col-1 form form-input prop-block" style="justify-content: center;padding-top: 13px;" *ngIf="activeItem.automaticTitle">
+        <input class="form-check-input" type="checkbox" [checked]="r.forAutomatic" (change)="r.forAutomatic=!r.forAutomatic;enableSave=true" style="position: relative; margin: 0;">
+      </div>
+      <div class="col-4 form form-input prop-block" style="display: flex;justify-content: space-between;padding: 8px 5px 5px 10px;">
+        <span style="align-self: flex-start;">{{r.name[lang]}}</span>
+        <div class="properties-props-container">
+          <i class="properties-props" *ngIf="r.inherited">Ereditata da: {{(activeItem.superclass) ? superclass[activeItem.superclass.value].name[lang] : '-'}}</i>
+          <i class="properties-props" *ngIf="r.subrelationOf">Sottorelazione di: {{r.subrelationOf.type}}</i>
+          <i class="properties-props" *ngIf="r.reverseOf">Inversa di: {{r.reverseOf.type}}</i>
+          <i class="properties-props" *ngIf="r.symmetric">Relazione Simmetrica</i>
+        </div>
+      </div>
+      <div class="form form-input prop-block" style="padding-top: 8px;display: block;" [class.col-4]="!activeItem.automaticTitle" [class.col-3]="activeItem.automaticTitle">
+        <span *ngFor="let c of r.codomain; let last = last;">{{c.value}}<span *ngIf="!last">,&nbsp;</span></span>
+      </div>
+      <div class="col-1 form form-input prop-block" style="justify-content: center;padding-top: 13px;">
+        <input class="form-check-input" type="checkbox" [checked]="r.mandatory" [disabled]="true" style="position: relative; margin: 0;">
+      </div>
+      <div class="col-2 form form-input prop-block last-prop">
+        <a *ngIf="r.id" class="link" [class.disabled]="r.reverseOf || r.symmetric || activeItem.fromTopOntology || ontology.published" style="font-size: 13px;margin-right: 18px;margin-left: 10px;padding-top: 8px;" 
+          (click)="createReverse(r)">
+          <i class="fa fa-plus icon" style="font-size: 13px;"></i>
+          <span>Inversa</span>
+        </a>
+
+        <a *ngIf="!r.id" class="link" [class.disabled]="true" style="font-size: 13px;margin-right: 18px;margin-left: 10px;padding-top: 8px;"
+          tooltip="Salvare l'entità per poter creare l'inversa">
+          <i class="fa fa-plus icon" style="font-size: 13px;"></i>
+          <span>Inversa</span>
+        </a>
+
+        <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="editRelation(r, i)" 
+          style="position: relative;top: auto;right: auto;padding-right: 5px;" [disabled]="activeItem.fromTopOntology || ontology.published">
+          <i class="fa fa-pencil icon icon-v2" aria-hidden="true" *ngIf="!r.inherited"></i>
+          <i class="fa fa-eye icon icon-v2" aria-hidden="true" *ngIf="r.inherited" style="width: 15px;"></i>
+        </button>
+
+        <button class="btn btn-small btn-no-width btn-no-bg btn-trash" (click)="removeRelation(i)" style="position: relative;top: auto;right: auto;padding-left: 5px;" 
+          [disabled]="(disableEditing && r.id) || r.inherited || activeItem.fromTopOntology || ontology.published">
+          <i class="fa fa-trash icon icon-v1" aria-hidden="true"></i>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #popTemplate2>
+  <div>
+    <div style="margin-bottom: 5px;">
+      <a class="link" (click)="addRelation();isOpen=false;" style="font-size: 14px;color: black !important;cursor: pointer;">
+        Nuova relazione
+      </a>
+    </div>
+    <div>
+      <a class="link" (click)="addExistRelation();isOpen=false;" style="font-size: 14px;color: black !important;cursor: pointer;">
+        Relazione esistente nell'ontologia
+      </a>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,75 @@
+/****** BADGES ******/
+.badge {
+	color: setColor(default, badge-text);
+	padding: 5px;
+	.icon {
+		color: setColor(default, badge-text);
+	}
+
+   &.badge-no-bg {
+		background-color: transparent;
+   }
+
+	&.badge-primary {
+		background-color: setColor(default, badge-primary);
+	}
+	&.badge-secondary {
+		background-color: setColor(default, badge-secondary);
+	}
+	&.badge-info {
+		background-color: setColor(default, badge-info);
+	}
+
+	&.badge-number {
+		width: 25px;
+		height: 25px;
+		line-height: inherit;
+		@include borderRadius(0);
+	}
+	&.badge-close {
+		text-align: left;
+		font-weight: 500;
+		@include borderRadius(10px);
+		.btn {
+			padding: 0 15px 0 25px;
+		}
+
+	}
+
+	.label-group {
+		float: left;
+		padding-top: 3px;
+		span {
+			display: block;
+			&:first-child {
+				font-size: 1rem;
+				padding-bottom: 3px;
+			}
+			&:last-child {
+				font-style: italic;
+			}
+		}
+	}
+}
+
+.badge-label {
+	display: inline;
+	.badge-number {
+		width: 50px;
+		@include borderRadius(0);
+		+ .label {
+			font-size: 0.875rem;
+			font-weight: 500;
+		}
+	}
+}
+
+.badge-group {
+	display: block;
+	.badge-label {
+		display: block;
+		&:not(:last-child) {
+			padding-bottom: 10px;
+		}
+	}
+}

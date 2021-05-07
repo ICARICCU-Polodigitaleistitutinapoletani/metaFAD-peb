@@ -1,0 +1,46 @@
+/****** ACCORDION ******/
+
+/* Accordion Base */
+.accordion {
+   h1 {
+      font-size: 1.0625rem;
+      font-weight: 600;
+      margin-bottom: 0;
+   }
+   .head {
+      margin: 0.8125rem 0;
+      border-bottom: 1px solid $border;
+      .title {
+         padding-left: 0;
+         a {
+            color: setColor(default, accordion-title-active);
+            text-decoration: none;
+            .fa {
+               font-size: 0.8125rem;
+               color: setColor(default, widget-icon-active);
+               position: relative;
+               bottom: 1px;
+            }
+            &.collapsed {
+               color: setColor(default, accordion-title);
+               .fa {
+                  color: setColor(default, widget-icon-active);;
+                  @include rotate(-90deg);
+               }
+               + span {
+                  display: inline-flex;
+               }
+            }
+         }
+         span {
+            color: setColor(default, accordion-title);
+            display: none;
+         }
+      }
+      .link {
+         padding-right: 0;
+         text-align: right;
+         font-size: 0.875rem;
+      }
+   }
+}

@@ -1,0 +1,182 @@
+@import "../../_variables.scss";
+@import "var.scss";
+
+.editv2-component {
+    .card-shadow {
+        box-shadow: 0px 0px 80px 0 #e0e0e0;
+        padding: 0;
+        margin-bottom: 0 !important;
+        min-height: calc(100vh - 72px);
+        height: auto;
+    }
+
+    .list-container {
+        margin-right: 10px;
+    }
+
+    .centered {
+        display: flex;
+        justify-content: center;
+    }
+
+    .map-card {
+        display: flex; 
+        padding-top: 0;
+
+        .selected-node {
+            border: 1px solid #ccc;
+            padding: 15px;
+
+            .row-entity {
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                padding-bottom: 5px;
+                align-items: center;
+                height: 50px;
+            }
+
+            .properties-container {
+                border: 1px solid #ccc;
+
+                .row {
+                    border-bottom: 1px solid #ccc;
+                    &.last-row {
+                        border-bottom: none;
+                    }
+                }
+                .row-terminology {
+                    margin-bottom: 0;
+
+                    .card {
+                        &.flex {
+                            flex-direction: row;
+                            flex: 1;
+                            justify-content: space-between;
+                            align-items: center;
+                            padding: 5px 10px;
+                            border-bottom: none;
+                            min-height: 34px;
+                            align-items: center;
+                            height: 50px;
+
+                            .list-terminology {
+                                span {
+                                    margin-left: 7px;
+                                }
+                            
+                                .divider {
+                                    border-left: 1px solid grey;
+                                    margin-left: 0;
+                                }
+                            
+                                .complete {
+                                    font-size: 14px;
+                                    color: #006619 !important;
+                                }
+                
+                                .no-complete {
+                                    font-size: 14px;
+                                    color: #E3AC3D !important;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    &.metafad {
+        .card-shadow {
+            box-shadow: none;
+        }
+    }
+}
+
+.empty-ontology {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .empty-icon {
+        color: #ccc;
+
+        .fa {
+            font-size: 80px;
+        }
+    }
+
+    .empty-text {
+        font-size: 20px;
+        width: 300px;
+        text-align: center;
+        line-height: 1;
+    }
+
+    .empty-btn {
+        display: flex;
+        flex-direction: column;
+
+        .btn {
+            width: 300px;
+            border: 1px solid #ddd;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: $theme-secondary-color;
+            margin-bottom: 10px;
+            .icon {
+                color: $theme-secondary-color;
+            }
+        }
+    }
+    & > div {
+        margin-bottom: 20px;
+    }
+}
+
+.map-entity-title {
+    max-width: calc(100% - 120px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+::ng-deep .tab-container {
+    .nav {
+        &.nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            .nav-link {
+                border: 1px solid transparent;
+                padding: .5rem 1rem;
+                text-transform: capitalize;
+                color: #607d8b !important;
+                &.active {
+                    color: $color3 !important;
+                    border-color: #dee2e6 #dee2e6 #fff;
+                    &:after {
+                        border: none;
+                    }
+                }
+            }
+            .nav-item {
+                margin-bottom: -1px;
+                width: 150px;
+                text-align: center;
+            }
+        }
+    }
+    
+}
+
+a.disabled {
+    cursor: default;
+    color: #9ea5aa !important;
+
+    .icon {
+        cursor: default;
+        color: #9ea5aa !important;
+    }
+}

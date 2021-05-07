@@ -1,0 +1,21 @@
+<nav>
+  <ul class="pagination">
+    <li class="page-item" [ngClass]="{'disabled': current===0}">
+      <a class="page-link" 
+        (click)="changePage(current-1, current===0)"
+        [ngClass]="{'disabled': current===0}">Previous</a>
+    </li>
+    <li class="page-item" 
+      *ngFor="let page of pagesArray"
+      [ngClass]="{'active': page.index===current}">
+      <a class="page-link" 
+        (click)="changePage(page.index, false, page.dir)">
+        {{page.label}}</a>
+    </li>
+    <li class="page-item" [ngClass]="{'disabled': current===_pages-1}">
+      <a class="page-link" 
+        (click)="changePage(current+1, current===_pages-1)"
+        [ngClass]="{'disabled': current===_pages-1}">Next</a>
+    </li>
+  </ul>
+</nav>

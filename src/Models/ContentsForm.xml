@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+    xmlns:pnx="http://www.pinax.org/dtd/1.0/"
+    xmlns:model="pinax.models.*/"
+    model:tableName="contentsForm" model:usePrefix="true" model:type="document">
+
+    <model:Script parent="model">
+    <![CDATA[
+// init the index fields they can be:
+// index={tipo} ie. index=true, index=int, index=text
+// for objects in array
+// index={fieldName:type,fieldName:type} ie. id:int,type:text
+
+public function addFieldsToIndex($indexFields)
+{
+    if (!$indexFields) return;
+    $addedFields = array();
+    foreach($indexFields as $k=>$v) {
+        $fieldPath = explode('.', $k);
+        $fieldPathLength = count($fieldPath);
+        $targetObj = $this->content;
+        $targetKeyName = '';
+        $targetKeyNamePart = '';
+        $found = true;
+        foreach($fieldPath as $p) {
+            if (!property_exists($targetObj, $p)) {
+                $found = false;
+                break;
+            }
+            $targetKeyName = $p;
+        }
+        if (!$found || is_null($targetObj->{$targetKeyName})) continue;
+
+        $indexType = pinax_dataAccessDoctrine_DbField::INDEXED;
+        $options = null;
+        switch ($v) {
+            case 'int':
+                $type = \Doctrine\DBAL\Types\Type::INTEGER;
+                break;
+            case 'date':
+                $type = \Doctrine\DBAL\Types\Type::DATE;
+                break;
+            case 'fulltext':
+                $type = Doctrine\DBAL\Types\Type::STRING;
+                $indexType = pinax_dataAccessDoctrine_DbField::FULLTEXT;
+                break;
+            case 'array_id':
+                $type = pinax_dataAccessDoctrine_types_Types::ARRAY_ID;
+                break;
+            default:
+                $type = Doctrine\DBAL\Types\Type::STRING;
+        }
+        // verify if the field to index is part of array
+        $targetPropName = $targetKeyName;
+
+        if ($targetKeyNamePart) {
+            $options = array( pinax_dataAccessDoctrine_types_Types::ARRAY_ID => array(
+                                        'type' => $type,
+                                        'field' => $targetKeyNamePart
+                                    ));
+            $type = pinax_dataAccessDoctrine_types_Types::ARRAY_ID;
+            $targetPropName .= $targetKeyNamePart;
+        }
+    
+        $this->addField(new pinax_dataAccessDoctrine_DbField(
+                    $targetPropName,
+                    $type,
+                    255,
+                    false,
+                    null,
+                    '',
+                    false,
+                    false,
+                    '',
+                    $indexType | pinax_dataAccessDoctrine_DbField::ONLY_INDEX,
+                    $options
+                    ));
+
+        if (!in_array($targetPropName, $addedFields)) {
+            $this->{$targetPropName} = array();
+            $addedFields[] = $targetKeyName;
+        }
+
+        $this->{$targetPropName} = array_merge($this->{$targetPropName}, is_array($targetObj->{$targetKeyName}) ? $targetObj->{$targetKeyName} : array($targetObj->{$targetKeyName}));
+    }
+}
+    ]]>
+    </model:Script>
+
+    <model:Query name="getIndexValues">
+    <![CDATA[
+        SELECT DISTINCT document_index_text_value
+        FROM documents_index_text_tbl JOIN 
+        documents_detail_tbl ON  document_index_text_FK_document_detail_id = document_detail_id
+        WHERE document_index_text_name = :field
+        AND document_index_text_value COLLATE UTF8_GENERAL_CI LIKE :value
+        AND document_detail_status = 'PUBLISHED'
+    ]]>
+	</model:Query>
+
+    <model:Define>
+        <model:Field name="id" type="string" index="true" />
+        <model:Field name="title" type="string" validator="notNull" index="true" />
+        <model:Field name="__entityId" type="string" validator="notNull" index="true" />
+        <model:Field name="content" type="object" index="false" readFormat="false" />
+    </model:Define>
+
+</model:Model>

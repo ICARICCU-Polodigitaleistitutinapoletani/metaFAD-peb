@@ -1,0 +1,39 @@
+/****** Import helpers *****/
+@import "helpers/_variables.scss";
+@import "helpers/_themes-color.map.scss";
+@import "helpers/_mixins.scss";
+@import "helpers/_functions.scss";
+
+// @import "external_styles/_glizy.scss";
+@import "external_styles/_external-styles.scss";
+
+/****** Import base *****/
+@import "base/_base.scss";
+@import "base/_typography.scss";
+
+/****** Import layout *****/
+@import "layout/_layout-base.scss";
+@import "layout/_double-column.scss";
+
+/****** Import themes *****/
+@import "themes/_theme-violet.scss";
+
+/****** Import components *****/
+@import "components/_headers.scss";
+@import "components/_breadcrumbs.scss";
+@import "components/_widgets.scss";
+@import "components/_badges.scss";
+@import "components/_buttons.scss";
+@import "components/_cards.scss";
+@import "components/_box.scss";
+@import "components/_dropdowns.scss";
+@import "components/_forms.scss";
+@import "components/_labels.scss";
+@import "components/_pagination.scss";
+@import "components/_footers.scss";
+@import "components/_links.scss";
+@import "components/_lists.scss";
+@import "components/_navigation.scss";
+
+/****** Import pages *****/
+@import "pages/_login.scss";

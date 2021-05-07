@@ -1,0 +1,249 @@
+/* This file defines the themes colors.
+ * The colors under 'default' are the the default theme colors.
+ * You can edit or add them.
+ * You can define another theme adding the name of the theme
+ * followed by its colors:
+ *
+ * $themes-color: (
+ *    theme-name : (
+ *      color: value,
+ *      color: value,
+ *      color: value,
+ *    )
+ * )
+ *
+ * !important: you must edit colors only here!
+
+ * To set color in scss files you must use the function
+ * setColor(theme, color)
+ * Example:
+ * p {
+ *  background-colore: setColor(default, theme-color);
+ * }
+ *
+ * For more information see components/helpers/_functions.scss
+ */
+$themes-color: (
+	default: (
+		theme-color: $theme-green-acid,
+
+		/* text */
+		text-primary: $theme-green-acid,
+		text-secondary: $blue,
+		text-info: $cyan-dark,
+		
+		/* titles */
+		title: $gray-dark-light,
+
+		/* link */
+		link: $theme-green-acid,
+		link-icon: $green-acid,
+
+		link-base: $text,
+		link-base-hover: $text,
+		link-base-icon-wiki-bg: $white-smoke,
+		link-dark: $gray-dark,
+
+		link-complete: $green,
+		link-no-complete: $orange-tulip-tree,
+		divider-vbar: $gray,
+
+		/* list */
+		list-link: $black,
+
+		/* errors */
+		error-msg: $red,
+
+		/****** COMPONENTS ******/
+		/************************/
+		/*** Header ***/
+		header-bg: $green-acid,
+		header-text: $white,
+
+		/*** Breadcrumb ***/
+		breadcrumb-header: $white,
+		breadcrumb-text: $text-black,
+
+		/*** Widget Global ***/
+		widget-icon-active: $gray,
+
+		/* widget-box */
+		widget-box-icon: $white,
+		widget-box-text: $white,
+
+		widget-box-calendar-bg: $blue-aqua,
+		widget-box-calendar-bg-left: $blue,
+
+		widget-box-document-bg: $orange-ronchi,
+		widget-box-document-bg-left: $orange-tulip-tree,
+
+		widget-box-checked-bg: $purple,
+		widget-box-checked-bg-left: $purple-dark,
+
+		widget-box-speech-bg-bubble: $teal,
+		widget-box-speech-bg-bubble-left: $teal-dark,
+
+		/* accordion */
+		accordion-title: $gray-lighter,
+		accordion-title-active: $orange-tulip-tree,
+
+		/* Badges */
+		badge-primary: $green-acid,
+		badge-secondary: $blue-dark,
+		badge-info: $cyan-dark,
+		badge-text: $white,
+
+		/*** Forms ***/
+		select: $gray-dark,
+
+		/*** Labels ***/
+		label-bg: $gray91,
+
+		/*** Tabs ***/
+		tab-item: $gray-dark-light,
+		tab-border: $gray91,
+		tab-active: $orange-tulip-tree,
+		tab-danger: $red,
+		tab-success: $green,
+
+		/*** Cards Global ***/
+		card-text: $gray-dark,
+		card-header-base: $white,
+		card-subtitle: $gray,
+
+		/* card-icon */
+		card-icon: $gray,
+		card-time-text: $gray-dark,
+
+		/* card-date */
+		card-date-title: $cyan-dark,
+		card-date-subtitle: $gray,
+		card-date-text: $gray-dark,
+
+		/* card-only-text */
+		card-only-text-border: $blue-light,
+		card-only-text-active: $blue-light,
+		card-only-text-main-title: $green-acid,
+
+		/* card-comment */
+		card-comment-title: $orange-tulip-tree,
+		card-comment-title-label: $gray,
+
+		/* card-list */
+		card-list-link: $black,
+
+		/* card-evaluation */
+		eval-ok: $blue-dark,
+		eval-ko: $rich-gold,
+
+		/* card-login */
+		card-login-header-bg: $green-acid,
+		link-btn: $gray-dark-light,
+
+		/* card-video */
+		card-video-detail-header:$gray91,
+		card-no-selection: $gray91,
+		loading-text: $white,
+
+		/* card-table */
+		card-table-head-bg: $gray-lighter,
+		card-table-head: $white,
+
+		/*** Dropdowns ***/
+		dropdown-border: $black-light,
+		dropdown-icon: $white,
+		dropdown-text: $black,
+		dropdown-btn-icon: $black,
+		dropdown-item-hover: $alice-blue,
+		dropdown-item-active: $gray94,
+		dropdown-list-main-title: $green-acid,
+		dropdown-list-title: $gray-dark-light,
+		dropdown-list-text: $gray-dark,
+		dropdown-list-active: $black,
+		dropdown-btn-border: $gray91,
+      dropdown-footer: $alice-blue,
+		dropdown-full-label: $gray-lighter,
+
+		/*** Buttons ***/
+		/* btn */
+		btn-bg-default: $gray,
+		btn-bg-border: $white-smoke,
+
+		btn-no-bg: $gray,
+
+		btn-text: $white,
+		btn-primary: $green-acid,
+		btn-secondary: $blue,
+
+		btn-bg-icon-text: $gray94,
+		btn-icon-text: $black,
+
+		btn-icon-hover: $green-acid,
+
+		btn-disabled: $gainsboro,
+		btn-text-disabled: $gray94,
+
+		btn-card-video-detail: $black,
+
+		/*** Pagination ***/
+		pagination-link: $rich-gold,
+		pagination-link-focus: $rich-gold,
+		pagination-link-active: $gray91,
+		pagination-link-active-number: $gray-dark-light,
+		pagination-link-active-border: $gainsboro,
+
+		footer-bg: $gray99,
+	),
+	violet: (
+		theme-color: $theme-violet,
+
+		/* text */
+		text-primary: $theme-violet,
+		text-secondary: $blue,
+
+		/* titles */
+		title-color: $violet,
+
+		/* link */
+		link: $blue,
+		link-icon: $blue-dark,
+
+		link-table: $violet,
+		
+		/* icons */
+		icon-hover: $violet,
+
+		/****** COMPONENTS ******/
+		/************************/
+
+		/*** Header ***/
+		header-bg: $white-smoke,
+		header-text: $black,
+		header-main-title: $violet,
+		header-sub-title: $gray-lighter,
+
+		/*** Dropdowns ***/
+		dropdown-menu-bg: $white-smoke,
+		dropdown-list-main-title: $violet,
+
+		/*** Buttons ***/
+		btn-primary: $violet,
+		btn-icon-text: $blue,
+
+		/*** Pagination ***/
+		pagination-link: $blue,
+		pagination-link-focus: $blue,
+		pagination-link-active-number: $white,
+
+		/*** Tabs ***/
+		tab-active: $blue,
+
+		/*** Cards Global ***/
+
+		/* card-only-text */
+		card-only-text-main-title: $violet,
+
+		/* card-login */
+		card-login-header-bg: $violet,
+	),
+);

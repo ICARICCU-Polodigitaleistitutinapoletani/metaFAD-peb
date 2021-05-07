@@ -1,0 +1,58 @@
+<div class="form form-input"> 
+
+  <div class="dd-container" [ngClass]="{'allow-blank': allowBlank, '_selected': selected}"> 
+    <label *ngIf="title">{{title}}</label>
+    <input class="form-control" placeholder="" [(ngModel)]="model" readonly="readonly" [class.disabled]="disabled">
+    <div dropdown class="dropdown" *ngIf="!type || type=='1'" [isDisabled]="disabled" [autoClose]="false" #dropdown="bs-dropdown">
+      <button dropdownToggle class="btn dropdown-toggle" type="button"></button>
+      <div *dropdownMenu class="dropdown-menu">
+        <input type="text" class="dropdown-filter" placeholder="Filtra..." [(ngModel)]="filterText" *ngIf="enableFilter" style="padding-right: 35px;">
+        <i aria-hidden="true" class="icon fa fa-search" style="position: absolute; top: 19px; right: 10px;" *ngIf="enableFilter"></i>
+        <a class="dropdown-item" *ngIf="allowBlank" (click)="selectOpt(null);dropdown.hide();">-</a>
+        <ng-container *ngFor="let opt of opts | dpfilter:filterIds | dpListFilter:filterText">
+          <a class="dropdown-item" *ngIf="!filter || !opt.id || opt.id!=filter" (click)="selectOpt(opt);dropdown.hide();">{{opt.type}} <span *ngIf="top && check(opt.id)">({{label}} della Top Ontology)</span></a>
+        </ng-container>
+      </div>
+    </div>
+
+    <div dropdown *ngIf="type=='2'" class="dropdown dropdown-nav" [isOpen]="status.isopen" (isOpenChange)="change($event)" [isDisabled]="disabled">
+      <button dropdownToggle class="btn btn-no-bg dropdown-toggle" type="button"></button>
+      <div *dropdownMenu class="dropdown-menu no-shadow pb-0 big-dp dropdown-sx" (click)="$event.preventDefault();$event.stopPropagation();">
+        <div class="row">
+          <div class="col menu-list" *ngIf="!selectedOpt.id">
+            <ul class="list max-h">
+              <li class="dropdown-item" [ngClass]="{'main-title': first, 'selected': selectedOpt.id===opt.id}" *ngFor="let opt of opts" (click)="selectPrimary($event, opt)">
+                <a>{{opt.type}}</a>
+              </li>
+            </ul>
+          </div>
+          <!-- <div class="col menu-list" [ngClass]="{'col-4': selectedOpt.id && selectedOpt.id.includes('standard'), 'col-8': !selectedOpt.id || !selectedOpt.id.includes('standard')}"> -->
+          <div class="col menu-list" *ngIf="selectedOpt.id && (!selectedOpt.id.includes('standard') || (selectedOpt.id.includes('standard') && !selectedOpt.value))">
+            <ul class="list max-h">
+              <li class="dropdown-item" [ngClass]="{'selected': selectedOpt.value && selectedOpt.value.id===val.id}" *ngFor="let val of selectedOpt.values" (click)="selectSecondary($event, val)">
+                <a>{{val.type}}</a>
+              </li>
+            </ul>
+          </div>
+          <div class="col menu-list" *ngIf="selectedOpt.id && selectedOpt.id.includes('standard') && selectedOpt.value && selectedOpt.value.id">
+            <ul class="list max-h">
+              <li class="dropdown-item" [ngClass]="{'selected': selectedOpt.entity && selectedOpt.entity.id===entity.id}" *ngFor="let entity of superclass" (click)="selectTertiary($event, entity)">
+                <a>{{entity.type}}</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="dropdown-divider" *ngIf="selectedOpt.id || selectedOpt.value"></div>
+        <div class="dropdown-footer" *ngIf="selectedOpt.id || selectedOpt.value">
+          <button style="padding-left: 13px;" class="btn btn-no-bg btn-color" (click)=back()>Indietro</button>
+          <!-- <button class="btn btn-no-bg pull-right btn-color" [disabled]="!selectedOpt.value || !selectedOpt.id || (selectedOpt.id.includes('standard') && !selectedOpt.entity)" (click)=selectOpt(selectedOpt)>Conferma</button> -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div *ngIf="allowBlank && selected" class="reset-btn">
+    <i aria-hidden="true" class="icon fa fa-times" (click)="reset()"></i>
+  </div> -->
+  
+</div>

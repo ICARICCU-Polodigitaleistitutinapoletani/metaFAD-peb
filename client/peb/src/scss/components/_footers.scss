@@ -1,0 +1,63 @@
+/****** FOOTERS ******/
+.footer {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	left: 0;
+	width: 100%;
+	min-height: 47px;
+	padding: 0;
+	.container-fluid {
+		padding: 0;
+	}
+	/* footer-btn */
+	&.footer-btn {
+		.btn {
+			margin-right: 10px;
+		}
+		a.btn {
+			padding-top: 5px;
+
+		}
+		.btn-group {
+			display: inline-flex;
+			position: absolute;
+			right:15px;
+		}
+	}
+	/* footer-nav */
+	&.footer-nav {
+		.nav-tabs,
+		.tab-content {
+			margin-left: 20px;
+			margin-right: 20px;
+		}
+		.nav-tabs {
+			.nav-link {
+				font-size: 1rem;
+			}
+		}
+		.card-footer {
+			.btn-group {
+				position: absolute;
+				bottom: 10px;
+				right: 20px;
+				.btn:first-child {
+					margin-right: 10px;
+				}
+			}
+		}
+	}
+
+	.card-footer {
+		border-top: 1px solid $border;
+		height: 47px;
+		background-color: setColor(default, footer-bg);
+		padding: 7px 0;
+		.btn {
+			height: 30px;
+			margin-bottom: 0;
+			font-size: 0.875rem;
+		}
+	}
+}

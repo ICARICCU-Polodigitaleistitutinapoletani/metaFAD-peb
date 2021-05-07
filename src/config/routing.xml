@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<pnx:Routing xmlns:pnx="http://www.pinax.org/dtd/1.0/">
+    <pnx:Route method="GET" value="rest/ontologymanager/import" controller="ICARICCU\PEB\Controllers\Rest\Import" />
+    <pnx:Route method="GET" value="rest/ontologymanager/export" controller="ICARICCU\PEB\Controllers\Rest\Export" />
+    <pnx:Route method="GET" value="rest/ontologymanager/info" controller="ICARICCU\PEB\Controllers\Rest\Info" />
+    <pnx:Route method="GET" value="rest/ontologymanager/ontologies" controller="ICARICCU\PEB\Controllers\Rest\GetOntologies" />
+    <pnx:Route method="GET" value="rest/ontologymanager/ontologies/simple" controller="ICARICCU\PEB\Controllers\Rest\GetOntologiesSimple" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/new" controller="ICARICCU\PEB\Controllers\Rest\CreateOntology" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/duplicate/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\DuplicateOntology" />
+    <pnx:Route method="GET" value="rest/ontologymanager/ontology/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\GetOntology" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\PostOntology" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/{value=ontologyId}/title" controller="ICARICCU\PEB\Controllers\Rest\PostOntologyTitle" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/{value=ontologyId}/uri" controller="ICARICCU\PEB\Controllers\Rest\PostOntologyUri" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/{value=ontologyId}/share" controller="ICARICCU\PEB\Controllers\Rest\PostOntologyShare" />
+    <pnx:Route method="GET" value="rest/ontologymanager/ontology/{value=ontologyId}/entities" controller="ICARICCU\PEB\Controllers\Rest\GetOntologyEntities" />
+    <pnx:Route method="GET" value="rest/ontologymanager/ontology/{value=ontologyId}/instances" controller="ICARICCU\PEB\Controllers\Rest\GetOntologyInstances" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/{value=ontologyId}/publish" controller="ICARICCU\PEB\Controllers\Rest\PublishOntology" />
+
+    <pnx:Route method="POST" value="rest/ontologymanager/search/{value=ontologyId}/entities" controller="ICARICCU\PEB\Controllers\Rest\GetOntologyEntitiesSearch" />
+    <pnx:Route method="POST" value="rest/ontologymanager/search/{value=ontologyId}/terminologies" controller="ICARICCU\PEB\Controllers\Rest\GetOntologyTerminologiesSearch" />
+    <pnx:Route method="GET" value="rest/ontologymanager/entity-properties/{value=entityId}" controller="ICARICCU\PEB\Controllers\Rest\GetEntityProperties" />
+    <pnx:Route method="POST" value="rest/ontologymanager/entity-terminologies/{value=ontologyId}/{value=entityId}" controller="ICARICCU\PEB\Controllers\Rest\GetEntityTerminologies" />
+    <pnx:Route method="GET" value="rest/ontologymanager/terminology-properties/{value=terminologyId}" controller="ICARICCU\PEB\Controllers\Rest\GetTerminologyDetail" />
+    <pnx:Route method="GET" value="rest/ontologymanager/entity-graph/{value=entityId}" controller="ICARICCU\PEB\Controllers\Rest\GetEntityGraph" />
+    <pnx:Route method="GET" value="rest/ontologymanager/terminology-graph/{value=terminologyId}" controller="ICARICCU\PEB\Controllers\Rest\GetTerminologyGraph" />
+
+    <pnx:Route method="DELETE" value="rest/ontologymanager/ontology/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\DeleteOntology" />
+    <pnx:Route method="DELETE" value="rest/ontologymanager/ontologyContents/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\DeleteOntologyContents" />
+    <pnx:Route method="DELETE" value="rest/ontologymanager/entity/{value=ontologyId}/{value=entityId}" controller="ICARICCU\PEB\Controllers\Rest\DeleteEntity" />
+    <pnx:Route method="DELETE" value="rest/ontologymanager/entityContents/{value=ontologyId}/{value=entityId}" controller="ICARICCU\PEB\Controllers\Rest\DeleteEntityContents" />
+    <pnx:Route method="DELETE" value="rest/ontologymanager/terminology/{value=ontologyId}/{value=terminologyId}" controller="ICARICCU\PEB\Controllers\Rest\DeleteTerminology" />
+    <pnx:Route method="DELETE" value="rest/ontologymanager/relation/{value=ontologyId}/{value=relationId}" controller="ICARICCU\PEB\Controllers\Rest\DeleteRelation" />
+    <pnx:Route method="POST" value="rest/ontologymanager/ontology/{value=ontologyId}/terminology" controller="ICARICCU\PEB\Controllers\Rest\PostCreateTerminology" />
+    <pnx:Route method="POST" value="rest/ontologymanager/item/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\SetItem" />
+    <pnx:Route method="GET" value="rest/ontologymanager/getOntologyGraph" controller="ICARICCU\PEB\Controllers\Rest\GetJsonForOntologyGraph" />
+    <pnx:Route method="POST" value="rest/ontologymanager/getOntologyGraphFromOwl" controller="ICARICCU\PEB\Controllers\Rest\GetJsonForOntologyGraphFromOwl" />
+
+    <pnx:Route method="GET" value="rest/ontologymanager/autocomplete/{value=value}" controller="ICARICCU\PEB\Controllers\Rest\GenericAutocomplete" />
+    <pnx:Route method="GET" value="rest/ontologymanager/autocompleteOpenField/{value=id}/{value=value}" controller="ICARICCU\PEB\Controllers\Rest\AutocompleteOpenField" />
+    <pnx:Route method="GET" value="rest/ontologymanager/autocompleteInternalLink/{value=value}" controller="ICARICCU\PEB\Controllers\Rest\AutocompleteInternalLink" />
+    <pnx:Route method="GET" value="rest/ontologymanager/autocompleteRelation/{value=id}/{value=value}" controller="ICARICCU\PEB\Controllers\Rest\AutocompleteRelation" />
+
+    <!-- PEB -->
+    <pnx:Route method="GET" value="rest/ontologymanager/ontology/{value=ontologyId}/{value=type}" controller="ICARICCU\PEB\Controllers\Rest\GetOntologyProperties" />
+    <pnx:Route method="GET" value="rest/ontologymanager/getUri/{value=ontologyId}/{value=type}" controller="ICARICCU\PEB\Controllers\Rest\CalculateUri" />
+    <pnx:Route method="GET" value="rest/ontologymanager/generateUri/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\GenerateUriForOntology" />
+    <pnx:Route method="GET" value="rest/ontologymanager/autocompleteEntities/{value=ontologyId}/{value=value}" controller="ICARICCU\PEB\Controllers\Rest\AutocompleteEntities" />
+    <pnx:Route method="POST" value="rest/ontologymanager/search/{value=ontologyId}/relations" controller="ICARICCU\PEB\Controllers\Rest\GetOntologyRelationsSearch" />
+    <pnx:Route method="GET" value="rest/ontologymanager/canEdit/{value=propertyId}" controller="ICARICCU\PEB\Controllers\Rest\CanEditProperty" />
+    <pnx:Route method="POST" value="rest/ontologypicker" controller="ICARICCU\PEB\Controllers\Rest\GetOntologiesPicker" />
+    <pnx:Route method="POST" value="rest/ontologypicker/children" controller="ICARICCU\PEB\Controllers\Rest\GetOntologiesPickerChildren" />
+    <pnx:Route method="GET" value="rest/ontologymanager/getExternalRecord/{value=search}" controller="ICARICCU\PEB\Controllers\Rest\GetExternalRecord" />
+    <pnx:Route method="GET" value="rest/ontologymanager/deletingInfo/{value=ontologyId}/{value=entityId}" controller="ICARICCU\PEB\Controllers\Rest\DeletingInfo" />
+
+    <pnx:Route method="GET" value="rest/ontologymanager/reindexSolr/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\ReindexSolr" />
+    <pnx:Route method="POST" value="rest/ontologymanager/searchSolr/terminologies/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\GetTerminologiesFromSolr" />
+    <pnx:Route method="GET" value="rest/ontologymanager/cleanIndex" controller="ICARICCU\PEB\Controllers\Rest\CleanIndex" />
+
+    <pnx:Route method="GET" value="rest/ontologymanager/reindexContentsForm/{value=ontologyId}" controller="ICARICCU\PEB\Controllers\Rest\ReindexContentsForm" />
+
+    <pnx:Route method="GET" value="rest/ontologymanager/autoLinkInstances" controller="ICARICCU\PEB\Controllers\Rest\AutoLinkInstances" />
+    <!---->
+    
+    <pnx:Route name="ontologyManager.editor" value="ontologyManager.editor" pageId="ontologyManager.editor" />
+    <pnx:Route name="ontologyManager.tool.new" value="ontologyManager.tool/new" pageId="ontologyManager.tool" action="new" />
+    <pnx:Route name="ontologyManager.tool.duplicate" value="ontologyManager.tool/duplicate" pageId="ontologyManager.tool" action="duplicate" />
+    <pnx:Route name="ontologyManager.tool.topOntology" value="ontologyManager.tool/top-ontology" pageId="ontologyManager.tool" action="topontology" />
+    <pnx:Route name="ontologyManager.tool.grafo" value="ontologyManager.tool/grafo" pageId="ontologyManager.tool" action="grafo" />
+</pnx:Routing>

@@ -1,0 +1,20 @@
+.link-container {
+    background-color: #f9fafc;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 230px;
+    padding: 20px;
+
+    border: 1px solid #ccc;
+    box-shadow: 5px 0 5px -5px #333;
+
+    div {
+        margin-bottom: 10px;
+
+        a {
+            color: #40bcf5 !important;
+        }
+    }
+}

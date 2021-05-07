@@ -1,0 +1,127 @@
+/****** BUTTONS ******/
+.btn {
+	color: setColor(default, btn-text);
+	padding: 0 10px;
+	border: 0;
+	height: 38px;
+	text-transform: uppercase;
+	font-weight: 600;
+	font-size: 1.125rem;
+	@include borderRadius(0);
+	&:hover {
+		cursor: pointer;
+      	color: setColor(default, btn-bg-text);
+	}
+	&.disabled {
+		background-color: setColor(default, btn-disabled)!important;
+		color: setColor(default, btn-text-disabled);
+	}
+	&.btn-default {
+		background-color: setColor(default, btn-bg-default);
+	}
+	&.btn-primary {
+		background-color: setColor(default, btn-primary);
+	}
+	&.btn-secondary {
+		background-color: setColor(default, btn-secondary);
+	}
+	&.btn-no-width {
+		width: auto!important;
+	}
+	/* btn-border */
+	&.btn-border {
+		background-color: setColor(default, btn-bg-border);
+		border: 1px solid $border;
+		@include borderRadius(5px);
+		.icon {
+			color: setColor(default, btn-icon);
+		}
+	}
+	/* btn-icon */
+	&.btn-icon {
+		width: 25px;
+		height: 25px;
+		padding: 0;
+		&:hover {
+			.icon {
+				color: setColor(default, btn-icon-hover);
+			}
+
+		}
+	}
+
+	/* btn-icon-text */
+	&.btn-icon-text {
+		background-color: setColor(default, btn-bg-icon-text);
+		color: setColor(default, btn-icon-text);
+	   	text-transform: none;
+	   	font-weight: 500;
+		.icon {
+			color: setColor(default, btn-icon-text);
+			padding-right: 5px;
+		}
+	}
+
+	/* btn-no-bg */
+	&.btn-no-bg {
+		background-color: $transparent;
+		color: setColor(default, btn-no-bg);
+		&.btn-big {
+			font-size: 20px;
+			font-weight: 500;
+		}
+		&.btn-icon-text {
+			.icon  {
+				color: setColor(default, btn-no-bg);
+			}
+		}
+	}
+
+	&.btn-xs {
+		width: 26px;
+		height: 26px;
+		padding: 0;
+	}
+	&.btn-small {
+		width: 38px;
+		height: 38px;
+	}
+	&.btn-lg {
+		height: 50px;
+	}
+}
+
+.btn-dx,
+.btn-sx {
+	position: absolute;
+	right: 0;
+	top: 0;
+}
+.btn-sx {
+	left: 0;
+}
+
+.btn-container-flex {
+	display: flex;
+	min-height: $card-min-height;
+	align-items: center;
+	justify-content: center;
+}
+
+/* Buttons Group */
+.btn-group {
+	&.btn-up-down {
+		.btn {
+			display: block;
+			&:last-child {
+				bottom: 10px;
+				left: 1px;
+			}
+		}
+	}
+}
+
+
+
+
+

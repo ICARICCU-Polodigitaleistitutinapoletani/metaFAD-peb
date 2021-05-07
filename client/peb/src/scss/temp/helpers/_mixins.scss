@@ -1,0 +1,48 @@
+/* Mixins for responsive (mobile-first) */
+@mixin responsiveMin($min-width) {
+   @media screen and (min-width: $min-width) {
+      @content
+   }
+}
+
+/* Mixins for browser support */
+@mixin borderRadius($value) {
+   -webkit-border-radius: $value!important;
+   -moz-border-radius: $value!important;
+   border-radius: $value!important;
+}
+@mixin rotate($value) {
+   -webkit-transform: rotate($value);
+   -moz-transform: rotate($value);
+   -ms-transform: rotate($value);
+   -o-transform: rotate($value);
+   transform: rotate($value);
+}
+@mixin translate3d($width, $height, $depth) {
+   -webkit-transform: translate3d($width, $height, $depth)!important;
+   -moz-transform: translate3d($width, $height, $depth)!important;
+   -ms-transform: translate3d($width, $height, $depth)!important;
+   -o-transform: translate3d($width, $height, $depth)!important;
+   transform: translate3d($width, $height, $depth)!important;
+}
+@mixin noTransform() {
+	-webkit-transform: none!important;
+	-moz-transform: none!important;
+	-ms-transform: none!important;
+	-o-transform: none!important;
+	transform: none!important;
+}
+@mixin boxShadow($hoff, $voff, $blur, $spread, $color) {
+   -webkit-box-shadow: $hoff $voff $blur $spread $color;
+   -moz-box-shadow: $hoff $voff $blur $spread $color;
+   box-shadow: $hoff $voff $blur $spread $color;
+}
+@mixin noBoxShadow() {
+   -webkit-box-shadow: none!important;
+   -moz-box-shadow: none!important;
+   box-shadow: none!important;
+}
+@mixin noAppearance() {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+}

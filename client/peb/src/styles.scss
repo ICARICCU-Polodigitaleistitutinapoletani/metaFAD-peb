@@ -1,0 +1,320 @@
+/* You can add global styles to this file, and also import other style files */
+@import "variables";
+//@import "../node_modules/bootstrap/scss/bootstrap";
+@import "../node_modules/font-awesome/scss/font-awesome";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import "scss/styles";
+@import "scss/temp/monster-adminMenu";
+@import "_variables.scss";
+
+@import "var.scss";
+
+html {
+    margin-bottom: 0;
+    .client-peb {
+        margin-bottom: 0;
+    }
+}
+
+html, body {
+    .client-peb {
+        font-size: 14px;
+    }
+}
+
+.theme-violet {
+    .client-peb {
+        a {
+            color: #0567B9 !important;
+
+            &.link-v2 {
+                color: $color1 !important;
+            }
+
+            &.link-v3 {
+                color: $color2 !important;
+            }
+        }
+
+        a.no-complete {
+            color: #E3AC3D !important;
+        }
+
+        .pagination .page-item.active .page-link {
+            color: #fff !important;
+        }
+
+        .icon {
+            &.icon-v2 {
+                color: $color1 !important;
+            }
+            &.icon-v3 {
+                color: $color2 !important;
+            }
+        }
+
+        .color-v3 {
+            color: $color2 !important;
+        }
+    }
+
+    &.metafad {
+        a {
+            color: $color2 !important;
+
+            .icon {
+                color: $color2 !important;
+            }
+
+            &.dropdown-item {
+                color: black !important;
+            }
+        }
+    }
+}
+
+.client-peb {
+    .link {
+        font-size: 1rem;
+        margin-right: 15px;
+    }
+
+    .links {
+        text-align: right;
+        margin-top: -2px;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        /* display: none; <- Crashes Chrome on hover */
+        -webkit-appearance: none;
+        margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    }
+
+    button {
+        &:focus {
+            outline: 0;
+            box-shadow: none !important;
+        }
+    }
+
+    a {
+        cursor: pointer;
+    }
+
+    .card {
+        &.bg {
+            background-color: #f0f3f5;
+        }
+        &.active {
+            background-color: #e7eff8;
+        }
+
+        .card-body {
+            .card-title {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+    
+    .form-input-text.form-big .dropdown-toggle:after {
+        top: auto;
+    }
+}
+
+.mce-notification-warning, .mce-notification-error {
+    display: none !important;
+}
+
+.flex {
+    display: flex;
+}
+
+.black-overlay {
+    position: fixed !important;
+}
+
+
+svg {
+    overflow: hidden;
+}
+/* Stile testo delle entità */
+g.nodes tspan {
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: #000;
+}
+/* Stile testo delle entità in HTML */
+g.nodes div {
+    white-space: nowrap;
+    padding: 2px 5px 2px 5px;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: #000;
+}
+/* Stile testo delle entità principali */
+g.nodes tspan.main-node {
+    fill: #000 !important;
+}
+/* Stile testo delle entità principali in HTML */
+div.main-node {
+    padding: 2px 7px 2px 7px;
+    font-family: Helvetica, sans-serif;
+    font-size: 14px;
+    color: #000 !important;
+}
+/* Stile testo delle relazioni */
+g.edgeLabels tspan {
+}
+/* Stile riquadro delle entità */
+.node rect {
+    stroke: #000;
+    stroke-width: 2px;
+    fill: #fff;
+}
+.node a {
+    color: $tertiary-color ;
+    text-decoration: underline;
+}
+.node a:hover {
+    color: $primary-color;
+}
+/* Stile riquadro delle entità principali */
+.node rect.main-node {
+    fill: #fff;
+}
+/* Stile delle frecce */
+.edgePath path {
+    stroke: #000;
+    stroke-width: 1.5px;
+}
+
+.metafad {
+    .btn {
+        color: #fff;
+        padding: .375rem .75rem;
+        border: 0;
+        height: auto;
+        text-transform: uppercase;
+        font-weight: 400;
+        font-size: 1rem;
+        border-radius: .25rem;
+        // min-width: 60px;
+
+        &.btn-default {
+            background-color: #9ea5aa;
+        }
+
+        &.btn-primary {
+            background-color: $color1;
+
+            &:hover {
+                background-color: $color1;
+            }
+        }
+
+        &.btn-secondary {
+            background-color: $color2;
+        }
+
+        &.btn-icon {
+            &:hover {
+                .icon {
+                    &.icon-v1 {
+                        color: $color1;
+                        &:hover {
+                            color: $color1 !important;
+                        }
+                    }
+                    
+                    &.icon-v2 {
+                        color: $color2;
+                        &:hover {
+                            color: $color2 !important;
+                        }
+                    }
+                    
+                }
+            }
+
+            &:disabled {
+                &:hover {
+                    cursor: default;
+                    .icon {
+                        &.icon-v1 {
+                            color: #9ea5aa;
+                            &:hover {
+                                cursor: default;
+                                color: #9ea5aa !important;
+                            }
+                        }
+                        
+                        &.icon-v2 {
+                            color: #9ea5aa;
+                            &:hover {
+                                cursor: default;
+                                color: #9ea5aa !important;
+                            }
+                        }
+                        
+                    }
+                }
+            }
+        }
+
+        .icon {
+            &.icon-v1 {
+                color: $color1;
+                &:hover {
+                    color: $color1 !important;
+                }
+            }
+            
+            &.icon-v2 {
+                color: $color2;
+                &:hover {
+                    color: $color2 !important;
+                }
+            }
+            
+        }
+
+        &.disabled, &:disabled {
+            opacity: .65;
+            &:hover {
+                cursor: default;
+            }
+            .icon {
+                color: #9ea5aa;
+
+                &:hover {
+                    color: #9ea5aa !important;
+                }
+            }
+        }
+    }
+
+    .breadcrumb {
+        border-bottom: 1px solid #dddee0;
+        padding-bottom: .75rem;
+    }
+
+    &.theme-violet {
+        .text-secondary {
+            color: $color2 !important;
+        }
+
+        a {
+            &.link-v1 {
+                color: $color1 !important;
+
+                .icon {
+                    color: $color1 !important;
+                }
+            }
+        }
+    }
+
+}

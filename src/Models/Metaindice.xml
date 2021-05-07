@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<model:Model
+	xmlns:pnx="http://www.pinax.org/dtd/1.0/"
+    xmlns:model="pinax.models.*/"
+    model:tableName="metaindice"
+    model:type="document" model:usePrefix="true" >
+
+    <model:Define>
+        <model:Field name="chi" type="object" readFormat="false" />
+        <model:Field name="cosa" type="object" readFormat="false" />
+        <model:Field name="dove" type="object" readFormat="false" />
+        <model:Field name="quando" type="object" readFormat="false" />
+    </model:Define>
+
+</model:Model>

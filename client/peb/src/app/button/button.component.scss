@@ -1,0 +1,21 @@
+@import "../../_variables.scss";
+
+.btn {
+	&.btn-default {
+		background-color: transparent;
+		color: $secondary-color;
+		text-transform: capitalize;
+	}
+	&.btn-icon-text {
+
+	}
+	&.btn-no-bg {
+		
+	}
+	&.text-gray {
+		color: $secondary-color !important;
+		.icon {
+			color: $secondary-color !important;
+		}
+	}
+}

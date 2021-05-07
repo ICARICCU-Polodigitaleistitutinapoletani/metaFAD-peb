@@ -1,0 +1,164 @@
+/*** THEME VIOLET***/
+.theme-violet {
+	/* text */
+	.text-primary,
+	.text-primary .icon {
+		color: setColor(violet, text-primary)!important;
+		&:hover {
+			color: setColor(violet, text-primary)!important;
+		}
+	}
+	.text-secondary,
+	.text-secondary .icon {
+		color: setColor(violet, text-secondary)!important;
+		&:hover {
+			color: setColor(violet, text-secondary)!important;
+		}
+	}
+	.main-title {
+		color: setColor(violet, card-only-text-main-title);
+		* {
+			color: setColor(violet, card-only-text-main-title);
+		}
+	}
+
+	/* link */
+	a {
+		color: setColor(violet, link);
+		&:hover {
+			color: setColor(violet, link);
+		}
+		.icon {
+			color: setColor(violet, link-icon);
+			&:hover {
+				color: setColor(violet, link-icon);
+			}
+		}
+	}
+
+	/* icon */
+	.icon {
+		&:hover,
+		&:active {
+			color: setColor(violet, icon-hover);
+		}
+	}
+
+	/* buttons */
+	.btn {
+		background-color: setColor(violet, btn-color-base);
+		&.btn-primary {
+			background-color: setColor(violet, btn-primary);
+			&:hover {
+				background-color: setColor(violet, btn-primary);
+			}
+		}
+		&.btn-secondary {
+			background-color: setColor(violet, btn-secondary);
+		}
+		&.btn-icon {
+			&:hover,
+			&:active {
+				.icon {
+					color: setColor(violet, icon-hover);
+				}
+			}
+		}
+	}
+
+	/* Header */
+	.header {
+		background-color: setColor(violet, header-bg);
+		color: setColor(violet, header-text);
+		@include noBoxShadow();
+		.navbar {
+			.main-title {
+				color: setColor(violet, header-main-title);
+				font-weight: 300;
+			}
+		}
+		.sub-title {
+			color: setColor(violet, header-sub-title);
+		}
+
+		&.header-dropdown-full {
+			.dropdown-full {
+				.dropdown-toggle,
+				.dropdown-toggle .icon {
+					color: setColor(violet, header-sub-title);
+				}
+				.dropdown-menu {
+					background-color: setColor(violet, dropdown-menu-bg);
+
+				}
+			}
+		}
+	}
+
+	/* Tabs */
+	.nav.nav-tabs {
+		.nav-link {
+			&.active:after {
+				border-color: setColor(violet, tab-active);
+			}
+		}
+    li.active {
+      a:after {
+        border-bottom-color: setColor(violet, tab-active);
+      }
+    }
+	}
+
+	/* Cards */
+	.card {
+		&.card-login {
+			&.card-login-icon {
+				.card-header {
+					background-color: setColor(violet, card-login-header-bg);
+				}
+			}
+		}
+		&.card-table {
+			a {
+				color: setColor(violet, link-table);
+			}
+		}
+	}
+
+	/* Pagination */
+	.pagination {
+    .page-item {
+      .page-link {
+        color: setColor(violet, pagination-link);
+        @include borderRadius(0);
+        &:focus {
+          @include boxShadow(0, 0, 0, .1rem, setColor(violet, pagination-link-focus));
+        }
+      }
+    }
+		.page-item.active {
+			.page-link {
+				background-color: setColor(violet, pagination-link);
+				border-color: setColor(violet, pagination-link);
+			}
+		}
+	}
+
+	/* Dropdown */
+	.dropdown {
+		.dropdown-footer {
+			.btn {
+				color: setColor(violet, btn-secondary);
+			}
+		}
+		&.dropdown-full {
+			.dropdown-menu {
+				.menu-list:first-child {
+					.main-title a {
+						color: setColor(violet, dropdown-list-main-title);
+					}
+				}
+			}
+		}
+	}
+}

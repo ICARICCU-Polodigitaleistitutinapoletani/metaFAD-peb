@@ -1,0 +1,9 @@
+.pagination {
+    height: 34px;
+    
+    .page-item {
+        &.disabled {
+            opacity: .6;
+        }
+    }
+}
